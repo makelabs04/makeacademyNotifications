@@ -47,7 +47,7 @@ router.get('/stats', async (req, res) => {
     });
   } catch (err) {
     console.error('[admin/stats]', err);
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).json({ error: 'Server error', detail: err.message, code: err.code });
   }
 });
 
@@ -60,7 +60,7 @@ router.get('/subscribers', async (req, res) => {
     return res.json({ success: true, data: rows });
   } catch (err) {
     console.error('[admin/subscribers]', err);
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).json({ error: 'Server error', detail: err.message, code: err.code });
   }
 });
 
@@ -73,7 +73,7 @@ router.get('/non-subscribers', async (req, res) => {
     return res.json({ success: true, data: rows });
   } catch (err) {
     console.error('[admin/non-subscribers]', err);
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).json({ error: 'Server error', detail: err.message, code: err.code });
   }
 });
 
@@ -138,7 +138,7 @@ router.post('/schedule', async (req, res) => {
     return res.json({ success: true, message: 'Schedule updated' });
   } catch (err) {
     console.error('[admin/schedule POST]', err);
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).json({ error: 'Server error', detail: err.message, code: err.code });
   }
 });
 
@@ -196,7 +196,7 @@ router.post('/send', async (req, res) => {
     return res.json({ success: true, sent, failed, total: rows.length });
   } catch (err) {
     console.error('[admin/send]', err);
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).json({ error: 'Server error', detail: err.message, code: err.code });
   }
 });
 
