@@ -1,18 +1,3 @@
-/**
- * routes/notify.js
- * POST /api/notify — send a push notification to all or specific users
- *
- * Body:
- *   {
- *     secret:      "your_admin_secret",   // from .env NOTIFY_SECRET
- *     title:       "New Free Course!",
- *     body:        "Python Basics is now free for all members.",
- *     url:         "https://makeacademy.in/courses.php",
- *     icon:        "/Home/assets/makelablogo.png",   // optional
- *     tag:         "course-alert",                   // optional
- *     emails:      ["a@b.com", "c@d.com"]            // optional, omit to send to ALL
- *   }
- */
 const express = require('express');
 const router  = express.Router();
 const webpush = require('web-push');
@@ -25,8 +10,7 @@ webpush.setVapidDetails(
 );
 
 router.post('/', async (req, res) => {
-  // Simple shared-secret guard
-  if (req.body.secret !== process.env.NOTIFY_SECRET) {
+  if (req.body.secret !== process.env.ADMIN_SECRET) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
@@ -36,9 +20,9 @@ router.post('/', async (req, res) => {
   try {
     let rows;
     if (Array.isArray(emails) && emails.length > 0) {
-      const placeholders = emails.map(() => '?').join(',');
+      const ph = emails.map(() => '?').join(',');
       [rows] = await db.execute(
-        `SELECT endpoint, p256dh, auth_key FROM ma_push_subscriptions WHERE user_email IN (${placeholders})`,
+        'SELECT endpoint, p256dh, auth_key FROM ma_push_subscriptions WHERE user_email IN (' + ph + ')',
         emails
       );
     } else {
@@ -49,9 +33,9 @@ router.post('/', async (req, res) => {
     const payload = JSON.stringify({
       title,
       body,
-      url:   url   || `${siteUrl}/dashboard.php`,
-      icon:  icon  || `${siteUrl}/Home/assets/makelablogo.png`,
-      badge: `${siteUrl}/Home/assets/favicon.png`,
+      url:   url   || siteUrl + '/dashcharts.php',
+      icon:  icon  || siteUrl + '/Home/assets/makelablogo.png',
+      badge: siteUrl + '/Home/assets/favicon.png',
       tag:   tag   || 'makeacademy-general',
     });
 
@@ -65,7 +49,6 @@ router.post('/', async (req, res) => {
         sent++;
       } catch (err) {
         if (err.statusCode === 410 || err.statusCode === 404) {
-          // Expired — clean up
           await db.execute('DELETE FROM ma_push_subscriptions WHERE endpoint = ?', [sub.endpoint]);
         }
         failed++;
