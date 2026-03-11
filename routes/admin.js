@@ -64,8 +64,7 @@ router.get('/non-subscribers', async (req, res) => {
        FROM users u
        WHERE u.Email IS NOT NULL
          AND u.Email NOT IN (SELECT user_email FROM ma_push_subscriptions)
-       ORDER BY u.created_at DESC
-       LIMIT 500`
+       ORDER BY u.created_at DESC`
     );
     return res.json({ success: true, data: rows });
   } catch (err) {
