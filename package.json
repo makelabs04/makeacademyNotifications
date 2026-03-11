@@ -1,7 +1,7 @@
 {
   "name": "makeacademy-push-notifier",
-  "version": "1.0.0",
-  "description": "Push notification server for makeacademy.in",
+  "version": "2.0.0",
+  "description": "Push notification server for makeacademy.in — with admin panel and scheduler",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
