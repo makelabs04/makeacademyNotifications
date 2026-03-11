@@ -4,391 +4,340 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MakeAcademy — Notification Admin</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
   <style>
     :root {
-      --brand:     #00adee;
-      --brand-dk:  #0090c8;
-      --brand-lt:  #e6f7fd;
-      --brand-mid: #b3e8fa;
-      --white:     #ffffff;
-      --bg:        #f5fafd;
-      --border:    #d6eef8;
-      --text:      #0f2a38;
-      --muted:     #6b8fa0;
-      --danger:    #e85555;
-      --success:   #1db87a;
-      --warn:      #f59e0b;
-      --purple:    #7c5cfc;
-      --shadow:    0 2px 16px rgba(0,173,238,.10);
-      --shadow-md: 0 6px 28px rgba(0,173,238,.15);
+      --brand:    #00adee;
+      --brand-dk: #0090c7;
+      --brand-lt: #e8f7fd;
+      --brand-md: #b3e8fa;
+      --white:    #ffffff;
+      --bg:       #f4fafd;
+      --border:   #daeef8;
+      --text:     #0d2535;
+      --muted:    #6b8fa0;
+      --success:  #10b77f;
+      --danger:   #e54545;
+      --warn:     #f59e0b;
+      --purple:   #7c5cfc;
+      --sh:       0 2px 14px rgba(0,173,238,.09);
+      --sh-md:    0 6px 28px rgba(0,173,238,.14);
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    /* ── Login ─────────────────────────────────────────────── */
+    /* ── LOGIN ─────────────────────────────────────────── */
     #login-screen {
       display: flex; align-items: center; justify-content: center;
       min-height: 100vh;
-      background: linear-gradient(145deg, #e6f7fd 0%, #ffffff 50%, #d0f0fc 100%);
+      background: radial-gradient(ellipse at 30% 40%, #cff0fc 0%, #f4fafd 55%, #e0f5fd 100%);
     }
-    .login-box {
-      background: #fff;
-      border: 1.5px solid var(--brand-mid);
-      border-radius: 24px;
-      padding: 48px 44px;
-      width: 380px;
-      box-shadow: 0 20px 60px rgba(0,173,238,.12), 0 2px 8px rgba(0,0,0,.04);
-      text-align: center;
+    .lbox {
+      background: #fff; border: 1.5px solid var(--brand-md);
+      border-radius: 22px; padding: 44px 40px; width: 380px;
+      box-shadow: 0 24px 64px rgba(0,173,238,.13); text-align: center;
     }
-    .login-logo {
-      width: 64px; height: 64px;
-      background: var(--brand-lt);
-      border-radius: 18px;
+    .lbox-icon {
+      width: 62px; height: 62px; background: var(--brand-lt);
+      border: 2px solid var(--brand-md); border-radius: 16px;
       display: inline-flex; align-items: center; justify-content: center;
-      font-size: 32px; margin-bottom: 20px;
-      border: 2px solid var(--brand-mid);
+      font-size: 28px; margin-bottom: 18px;
     }
-    .login-box h2 { font-size: 1.5rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
-    .login-box p  { color: var(--muted); font-size: .875rem; margin-bottom: 28px; }
-    .login-box input {
-      width: 100%; padding: 13px 16px;
-      border: 1.5px solid var(--border);
-      border-radius: 12px; font-size: .95rem; font-family: inherit;
-      margin-bottom: 14px; outline: none; transition: border .2s, box-shadow .2s;
-      background: var(--bg);
-      color: var(--text);
+    .lbox h2 { font-size: 1.45rem; font-weight: 700; margin-bottom: 5px; }
+    .lbox p  { color: var(--muted); font-size: .84rem; margin-bottom: 26px; }
+    .lbox input {
+      width: 100%; padding: 12px 16px; border: 1.5px solid var(--border);
+      border-radius: 11px; font-size: .92rem; font-family: inherit;
+      margin-bottom: 13px; outline: none; background: var(--bg); color: var(--text);
+      transition: border .18s, box-shadow .18s;
     }
-    .login-box input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(0,173,238,.12); background: #fff; }
-    .login-box button {
-      width: 100%; padding: 13px;
-      background: var(--brand);
-      color: #fff; border: none; border-radius: 12px;
+    .lbox input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(0,173,238,.11); background: #fff; }
+    .lbox button {
+      width: 100%; padding: 13px; background: var(--brand);
+      color: #fff; border: none; border-radius: 11px;
       font-size: .95rem; font-weight: 600; cursor: pointer;
-      font-family: inherit; transition: background .2s, transform .1s;
-      letter-spacing: .02em;
+      font-family: inherit; transition: background .18s, transform .12s;
     }
-    .login-box button:hover { background: var(--brand-dk); transform: translateY(-1px); }
+    .lbox button:hover { background: var(--brand-dk); transform: translateY(-1px); }
     #login-error { color: var(--danger); font-size: .82rem; margin-top: 10px; display: none; }
 
-    /* ── App layout ─────────────────────────────────────────── */
+    /* ── APP ───────────────────────────────────────────── */
     #app { display: none; }
 
     header {
-      background: #fff;
-      border-bottom: 1.5px solid var(--border);
-      padding: 0 28px;
-      height: 62px;
+      background: #fff; border-bottom: 1.5px solid var(--border);
+      height: 60px; padding: 0 28px;
       display: flex; align-items: center; justify-content: space-between;
-      position: sticky; top: 0; z-index: 100;
-      box-shadow: 0 2px 12px rgba(0,173,238,.07);
+      position: sticky; top: 0; z-index: 200;
+      box-shadow: 0 2px 10px rgba(0,173,238,.07);
     }
-    .header-logo {
-      display: flex; align-items: center; gap: 10px;
-      font-weight: 700; font-size: 1.05rem; color: var(--text);
+    .hlogo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1rem; }
+    .hlogo-icon {
+      width: 33px; height: 33px; background: var(--brand);
+      border-radius: 9px; display: flex; align-items: center;
+      justify-content: center; font-size: 15px;
     }
-    .header-logo .icon {
-      width: 34px; height: 34px; background: var(--brand);
-      border-radius: 9px; display: flex; align-items: center; justify-content: center;
-      font-size: 16px; color: #fff;
-    }
-    .header-logo span.dot { color: var(--brand); }
-    .header-right { display: flex; align-items: center; gap: 12px; }
-    .status-dot {
+    .hlogo-icon + span b { color: var(--brand); }
+    .hright { display: flex; align-items: center; gap: 14px; }
+    .online-pill {
       display: flex; align-items: center; gap: 6px;
-      font-size: .78rem; color: var(--muted); font-weight: 500;
+      background: #e6faf2; color: var(--success);
+      padding: 5px 12px; border-radius: 20px; font-size: .75rem; font-weight: 600;
     }
-    .status-dot::before {
-      content: ''; width: 8px; height: 8px; border-radius: 50%;
-      background: var(--success); display: block;
-      box-shadow: 0 0 0 2px rgba(29,184,122,.2);
-      animation: pulse-dot 2s infinite;
+    .online-pill::before {
+      content: ''; width: 7px; height: 7px; background: var(--success);
+      border-radius: 50%; animation: blink 2s infinite;
     }
-    @keyframes pulse-dot {
-      0%,100% { box-shadow: 0 0 0 2px rgba(29,184,122,.2); }
-      50%      { box-shadow: 0 0 0 5px rgba(29,184,122,.08); }
-    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
     .logout-btn {
-      background: var(--bg); border: 1.5px solid var(--border);
-      color: var(--muted); padding: 7px 16px; border-radius: 9px;
-      cursor: pointer; font-family: inherit; font-size: .82rem; font-weight: 500;
-      transition: all .2s;
+      background: #fff; border: 1.5px solid var(--border); color: var(--muted);
+      padding: 7px 15px; border-radius: 9px; cursor: pointer;
+      font-family: inherit; font-size: .8rem; font-weight: 500; transition: all .18s;
     }
-    .logout-btn:hover { border-color: var(--danger); color: var(--danger); background: #fff5f5; }
+    .logout-btn:hover { border-color: var(--danger); color: var(--danger); }
 
-    .container { max-width: 1260px; margin: 0 auto; padding: 28px 24px; }
+    .container { max-width: 1280px; margin: 0 auto; padding: 26px 22px; }
 
-    /* ── Stats ──────────────────────────────────────────────── */
+    /* ── STATS ─────────────────────────────────────────── */
     .stats-grid {
-      display: grid; grid-template-columns: repeat(5, 1fr);
-      gap: 14px; margin-bottom: 28px;
+      display: grid; grid-template-columns: repeat(5,1fr);
+      gap: 13px; margin-bottom: 26px;
     }
-    @media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(3,1fr); } }
-    @media (max-width: 560px) { .stats-grid { grid-template-columns: repeat(2,1fr); } }
-
-    .stat-card {
+    @media(max-width:900px){ .stats-grid{ grid-template-columns:repeat(3,1fr); } }
+    @media(max-width:560px){ .stats-grid{ grid-template-columns:repeat(2,1fr); } }
+    .sc {
       background: #fff; border: 1.5px solid var(--border);
-      border-radius: 16px; padding: 18px 20px;
-      box-shadow: var(--shadow);
-      transition: transform .2s, box-shadow .2s;
+      border-radius: 14px; padding: 18px 18px 14px;
+      box-shadow: var(--sh); transition: transform .2s, box-shadow .2s;
     }
-    .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-    .stat-icon {
-      width: 36px; height: 36px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px; margin-bottom: 10px;
+    .sc:hover { transform: translateY(-2px); box-shadow: var(--sh-md); }
+    .sc-ico {
+      width: 34px; height: 34px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center; font-size: 17px; margin-bottom: 10px;
     }
-    .stat-card .num { font-size: 1.8rem; font-weight: 700; line-height: 1; }
-    .stat-card .lbl { font-size: .75rem; color: var(--muted); margin-top: 4px; font-weight: 500; }
-    .s-brand  .stat-icon { background: var(--brand-lt); }
-    .s-brand  .num { color: var(--brand); }
-    .s-green  .stat-icon { background: #e6faf2; }
-    .s-green  .num { color: var(--success); }
-    .s-red    .stat-icon { background: #fef2f2; }
-    .s-red    .num { color: var(--danger); }
-    .s-purple .stat-icon { background: #f3f0ff; }
-    .s-purple .num { color: var(--purple); }
-    .s-warn   .stat-icon { background: #fffbeb; }
-    .s-warn   .num { color: var(--warn); }
+    .sc .num { font-size: 1.9rem; font-weight: 700; line-height: 1; }
+    .sc .lbl { font-size: .73rem; color: var(--muted); margin-top: 4px; font-weight: 500; }
+    .s1 .sc-ico{background:var(--brand-lt)} .s1 .num{color:var(--brand)}
+    .s2 .sc-ico{background:#e6faf2}         .s2 .num{color:var(--success)}
+    .s3 .sc-ico{background:#fef2f2}         .s3 .num{color:var(--danger)}
+    .s4 .sc-ico{background:#f3f0ff}         .s4 .num{color:var(--purple)}
+    .s5 .sc-ico{background:#fffbeb}         .s5 .num{color:var(--warn)}
 
-    /* ── Tabs ───────────────────────────────────────────────── */
+    /* ── TABS ──────────────────────────────────────────── */
     .tabs {
       display: flex; gap: 4px; background: #fff;
-      border: 1.5px solid var(--border); border-radius: 14px;
-      padding: 5px; margin-bottom: 24px; flex-wrap: wrap;
-      box-shadow: var(--shadow);
+      border: 1.5px solid var(--border); border-radius: 13px;
+      padding: 5px; margin-bottom: 22px; flex-wrap: wrap;
+      box-shadow: var(--sh);
     }
     .tab-btn {
-      flex: 1; min-width: 110px; padding: 9px 14px; border: none;
-      background: transparent; border-radius: 10px; cursor: pointer;
-      font-family: inherit; font-size: .83rem; font-weight: 500;
-      color: var(--muted); transition: all .18s; white-space: nowrap;
+      flex: 1; min-width: 110px; padding: 9px 12px; border: none;
+      background: transparent; border-radius: 9px; cursor: pointer;
+      font-family: inherit; font-size: .82rem; font-weight: 500;
+      color: var(--muted); transition: all .16s; white-space: nowrap;
     }
     .tab-btn:hover { background: var(--brand-lt); color: var(--brand); }
-    .tab-btn.active {
-      background: var(--brand); color: #fff;
-      box-shadow: 0 3px 12px rgba(0,173,238,.3);
-    }
+    .tab-btn.active { background: var(--brand); color: #fff; box-shadow: 0 3px 10px rgba(0,173,238,.28); }
     .tab-content { display: none; }
-    .tab-content.active { display: block; animation: fade-in .2s ease; }
-    @keyframes fade-in { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+    .tab-content.active { display: block; animation: fi .2s ease; }
+    @keyframes fi { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:none} }
 
-    /* ── Cards ──────────────────────────────────────────────── */
+    /* ── CARD ──────────────────────────────────────────── */
     .card {
       background: #fff; border: 1.5px solid var(--border);
       border-radius: 16px; padding: 24px;
-      box-shadow: var(--shadow); margin-bottom: 20px;
+      box-shadow: var(--sh); margin-bottom: 18px;
     }
-    .card-title {
-      font-size: .95rem; font-weight: 700; color: var(--text);
-      margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+    .ctitle {
+      font-size: .95rem; font-weight: 700;
+      display: flex; align-items: center; gap: 9px; margin-bottom: 20px;
     }
-    .card-title .ct-icon {
-      width: 30px; height: 30px; border-radius: 8px;
-      background: var(--brand-lt); display: flex; align-items: center;
-      justify-content: center; font-size: 15px;
+    .ctitle-icon {
+      width: 30px; height: 30px; background: var(--brand-lt);
+      border-radius: 8px; display: flex; align-items: center;
+      justify-content: center; font-size: 14px;
     }
 
-    /* ── Form ───────────────────────────────────────────────── */
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-    .form-row.single { grid-template-columns: 1fr; }
-    @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
-    label { display: block; font-size: .75rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .04em; }
-    input[type=text], input[type=number], input[type=url], input[type=search], textarea, select {
-      width: 100%; padding: 10px 14px;
-      border: 1.5px solid var(--border); border-radius: 10px;
-      font-family: inherit; font-size: .88rem; outline: none;
-      transition: border .18s, box-shadow .18s;
-      background: var(--bg); color: var(--text);
+    /* ── FORM ──────────────────────────────────────────── */
+    .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; margin-bottom: 13px; }
+    .frow.one { grid-template-columns: 1fr; }
+    @media(max-width:580px){ .frow{grid-template-columns:1fr;} }
+    .flabel {
+      display: block; font-size: .71rem; font-weight: 600;
+      color: var(--muted); margin-bottom: 6px;
+      text-transform: uppercase; letter-spacing: .05em;
     }
-    input:focus, textarea:focus, select:focus {
-      border-color: var(--brand); background: #fff;
-      box-shadow: 0 0 0 3px rgba(0,173,238,.1);
+    .finput {
+      width: 100%; padding: 10px 13px; border: 1.5px solid var(--border);
+      border-radius: 10px; font-family: inherit; font-size: .88rem;
+      outline: none; background: var(--bg); color: var(--text);
+      transition: border .16s, box-shadow .16s;
     }
-    textarea { min-height: 80px; resize: vertical; }
+    .finput:focus { border-color: var(--brand); background: #fff; box-shadow: 0 0 0 3px rgba(0,173,238,.1); }
+    textarea.finput { min-height: 78px; resize: vertical; }
 
-    /* ── Buttons ────────────────────────────────────────────── */
+    /* ── BUTTONS ───────────────────────────────────────── */
     .btn {
       padding: 10px 22px; border: none; border-radius: 10px; cursor: pointer;
       font-family: inherit; font-size: .875rem; font-weight: 600;
-      transition: all .18s; display: inline-flex; align-items: center; gap: 6px;
+      transition: all .16s; display: inline-flex; align-items: center; gap: 6px;
     }
-    .btn-brand {
-      background: var(--brand); color: #fff;
-      box-shadow: 0 3px 12px rgba(0,173,238,.28);
-    }
-    .btn-brand:hover { background: var(--brand-dk); transform: translateY(-1px); box-shadow: 0 5px 18px rgba(0,173,238,.35); }
-    .btn-outline {
-      background: #fff; color: var(--brand);
-      border: 1.5px solid var(--brand);
-    }
+    .btn-brand { background: var(--brand); color: #fff; box-shadow: 0 3px 12px rgba(0,173,238,.26); }
+    .btn-brand:hover { background: var(--brand-dk); transform: translateY(-1px); }
+    .btn-outline { background: #fff; color: var(--brand); border: 1.5px solid var(--brand); }
     .btn-outline:hover { background: var(--brand-lt); }
-    .btn-danger { background: var(--danger); color: #fff; }
-    .btn-sm { padding: 6px 14px; font-size: .78rem; border-radius: 8px; }
 
-    /* ── Target toggle ──────────────────────────────────────── */
-    .send-target { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-    .target-btn {
-      padding: 8px 18px; border-radius: 20px;
-      border: 1.5px solid var(--border); cursor: pointer;
-      font-family: inherit; font-size: .83rem; font-weight: 500;
-      background: #fff; color: var(--muted); transition: all .18s;
+    /* ── SEND TARGET ───────────────────────────────────── */
+    .send-target { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; }
+    .tgt-btn {
+      padding: 8px 17px; border-radius: 20px; border: 1.5px solid var(--border);
+      cursor: pointer; font-family: inherit; font-size: .82rem; font-weight: 500;
+      background: #fff; color: var(--muted); transition: all .16s;
     }
-    .target-btn.active {
-      border-color: var(--brand); background: var(--brand-lt); color: var(--brand);
-    }
+    .tgt-btn.active { border-color: var(--brand); background: var(--brand-lt); color: var(--brand); }
 
-    /* ── Table toolbar ──────────────────────────────────────── */
-    .table-toolbar {
-      display: flex; gap: 10px; align-items: center;
-      margin-bottom: 16px; flex-wrap: wrap;
-    }
-    .search-box {
-      position: relative; flex: 1; min-width: 200px;
-    }
-    .search-box input {
-      padding-left: 36px; background: var(--bg);
-    }
-    .search-box::before {
-      content: '🔍'; position: absolute; left: 11px; top: 50%;
-      transform: translateY(-50%); font-size: 13px; pointer-events: none;
-    }
-    .filter-select {
-      min-width: 150px; padding: 10px 14px !important;
-    }
-    .sort-btn {
-      padding: 9px 14px; border: 1.5px solid var(--border);
-      border-radius: 10px; background: #fff; cursor: pointer;
-      font-family: inherit; font-size: .8rem; font-weight: 500;
-      color: var(--muted); transition: all .18s; white-space: nowrap;
-      display: flex; align-items: center; gap: 5px;
-    }
-    .sort-btn.active { border-color: var(--brand); background: var(--brand-lt); color: var(--brand); }
-    .sort-arrow { font-size: 10px; }
-
-    /* ── Table ──────────────────────────────────────────────── */
-    .table-wrap { overflow-x: auto; border-radius: 10px; border: 1.5px solid var(--border); }
-    table { width: 100%; border-collapse: collapse; font-size: .84rem; }
-    thead th {
-      background: var(--brand-lt); padding: 11px 14px; text-align: left;
-      font-weight: 600; color: var(--brand); border-bottom: 1.5px solid var(--border);
-      white-space: nowrap; cursor: pointer; user-select: none;
-      transition: background .15s;
-    }
-    thead th:hover { background: var(--brand-mid); }
-    tbody tr { transition: background .12s; }
-    tbody tr:hover { background: var(--brand-lt); }
-    tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text); }
-    tbody tr:last-child td { border-bottom: none; }
-    .table-count { font-size: .78rem; color: var(--muted); margin-top: 10px; text-align: right; }
-
-    /* ── Badges ─────────────────────────────────────────────── */
-    .badge {
-      display: inline-block; padding: 3px 10px; border-radius: 20px;
-      font-size: .72rem; font-weight: 600; letter-spacing: .02em;
-    }
-    .badge-brand  { background: var(--brand-lt); color: var(--brand); }
-    .badge-green  { background: #dcfce7; color: #15803d; }
-    .badge-red    { background: #fee2e2; color: #dc2626; }
-    .badge-purple { background: #f3f0ff; color: var(--purple); }
-    .badge-warn   { background: #fffbeb; color: #b45309; }
-
-    /* ── Checkbox list ──────────────────────────────────────── */
-    input[type=checkbox] { width: 15px; height: 15px; accent-color: var(--brand); cursor: pointer; }
+    /* ── SUBSCRIBER CHECKBOX LIST ──────────────────────── */
     .sub-list {
       border: 1.5px solid var(--border); border-radius: 10px;
-      max-height: 200px; overflow-y: auto; padding: 10px; background: var(--bg);
+      max-height: 200px; overflow-y: auto; padding: 8px 10px; background: var(--bg);
     }
-    .sub-list label {
-      display: flex; gap: 8px; align-items: center;
-      cursor: pointer; padding: 5px 6px; border-radius: 7px;
-      font-size: .84rem; text-transform: none; letter-spacing: 0;
-      color: var(--text); font-weight: 400;
-      transition: background .12s;
+    .sub-list-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 5px 6px; border-radius: 7px; cursor: pointer;
+      font-size: .84rem; transition: background .12s;
     }
-    .sub-list label:hover { background: var(--brand-lt); }
-    .sub-list .select-all { font-weight: 600; color: var(--brand); border-bottom: 1px solid var(--border); margin-bottom: 4px; padding-bottom: 6px; }
+    .sub-list-item:hover { background: var(--brand-lt); }
+    .sub-list-item.head { font-weight: 600; color: var(--brand); border-bottom: 1px solid var(--border); margin-bottom: 3px; padding-bottom: 7px; }
+    input[type=checkbox] { width: 15px; height: 15px; accent-color: var(--brand); cursor: pointer; flex-shrink: 0; }
 
-    /* ── Day pills ──────────────────────────────────────────── */
-    .day-pills { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 16px; }
+    /* ── TABLE TOOLBAR ─────────────────────────────────── */
+    .toolbar {
+      display: flex; gap: 9px; align-items: center;
+      margin-bottom: 15px; flex-wrap: wrap;
+    }
+    .search-wrap { position: relative; flex: 1; min-width: 190px; }
+    .search-wrap::before {
+      content: '🔍'; position: absolute; left: 11px; top: 50%;
+      transform: translateY(-50%); font-size: 12px; pointer-events: none;
+    }
+    .search-wrap input { padding-left: 34px !important; }
+    .toolbar select {
+      min-width: 145px; padding: 9px 13px; border: 1.5px solid var(--border);
+      border-radius: 10px; font-family: inherit; font-size: .82rem;
+      outline: none; background: #fff; color: var(--text); cursor: pointer;
+      transition: border .16s;
+    }
+    .toolbar select:focus { border-color: var(--brand); }
+    .sort-btn {
+      padding: 9px 13px; border: 1.5px solid var(--border); border-radius: 10px;
+      background: #fff; cursor: pointer; font-family: inherit; font-size: .78rem;
+      font-weight: 500; color: var(--muted); transition: all .16s;
+      display: flex; align-items: center; gap: 4px; white-space: nowrap;
+    }
+    .sort-btn:hover, .sort-btn.on { border-color: var(--brand); background: var(--brand-lt); color: var(--brand); }
+
+    /* ── TABLE ─────────────────────────────────────────── */
+    .twrap { border-radius: 11px; border: 1.5px solid var(--border); overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .83rem; }
+    thead th {
+      background: var(--brand-lt); padding: 10px 13px; text-align: left;
+      font-weight: 600; color: var(--brand); border-bottom: 1.5px solid var(--border);
+      white-space: nowrap; cursor: pointer; user-select: none;
+    }
+    thead th:hover { background: var(--brand-md); }
+    tbody tr { transition: background .1s; }
+    tbody tr:hover { background: #f0faff; }
+    tbody td { padding: 10px 13px; border-bottom: 1px solid var(--border); }
+    tbody tr:last-child td { border-bottom: none; }
+    .tc { font-size: .78rem; color: var(--muted); margin-top: 9px; text-align: right; }
+
+    /* ── BADGES ────────────────────────────────────────── */
+    .badge {
+      display: inline-block; padding: 2px 9px; border-radius: 20px;
+      font-size: .7rem; font-weight: 600;
+    }
+    .b-brand  { background: var(--brand-lt); color: var(--brand); }
+    .b-green  { background: #dcfce7; color: #15803d; }
+    .b-red    { background: #fee2e2; color: #dc2626; }
+    .b-purple { background: #f3f0ff; color: var(--purple); }
+    .b-warn   { background: #fffbeb; color: #b45309; }
+
+    /* ── DAY PILLS ─────────────────────────────────────── */
+    .day-pills { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 15px; }
     .day-pill {
-      padding: 7px 15px; border: 1.5px solid var(--border); border-radius: 20px;
-      cursor: pointer; font-size: .8rem; font-weight: 500;
-      background: #fff; color: var(--muted); transition: all .18s;
+      padding: 7px 14px; border: 1.5px solid var(--border); border-radius: 20px;
+      cursor: pointer; font-size: .79rem; font-weight: 500;
+      background: #fff; color: var(--muted); transition: all .16s;
     }
-    .day-pill:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-lt); }
-    .day-pill.selected { border-color: var(--brand); background: var(--brand); color: #fff; }
+    .day-pill:hover { border-color: var(--brand); color: var(--brand); }
+    .day-pill.sel { border-color: var(--brand); background: var(--brand); color: #fff; }
 
-    /* ── Toggle switch ──────────────────────────────────────── */
-    .toggle-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-    .toggle-row span { font-size: .875rem; font-weight: 500; color: var(--text); }
-    .toggle { position: relative; width: 44px; height: 24px; }
-    .toggle input { opacity: 0; width: 0; height: 0; }
-    .toggle-slider {
-      position: absolute; inset: 0; background: var(--border); border-radius: 24px;
-      cursor: pointer; transition: background .2s;
+    /* ── TOGGLE ────────────────────────────────────────── */
+    .toggle-row { display: flex; align-items: center; gap: 11px; margin-bottom: 20px; }
+    .toggle-row span { font-size: .875rem; font-weight: 500; }
+    .tgl { position: relative; width: 42px; height: 23px; flex-shrink: 0; }
+    .tgl input { opacity:0; width:0; height:0; }
+    .tgl-s {
+      position: absolute; inset: 0; background: var(--border);
+      border-radius: 23px; cursor: pointer; transition: background .2s;
     }
-    .toggle-slider::before {
-      content: ''; position: absolute; width: 18px; height: 18px;
-      background: #fff; border-radius: 50%; left: 3px; top: 3px;
-      transition: transform .2s; box-shadow: 0 1px 4px rgba(0,0,0,.15);
+    .tgl-s::before {
+      content:''; position: absolute; width:17px; height:17px;
+      background:#fff; border-radius:50%; left:3px; top:3px;
+      transition: transform .2s; box-shadow: 0 1px 4px rgba(0,0,0,.14);
     }
-    .toggle input:checked + .toggle-slider { background: var(--brand); }
-    .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
+    .tgl input:checked + .tgl-s { background: var(--brand); }
+    .tgl input:checked + .tgl-s::before { transform: translateX(19px); }
 
-    /* ── Toast ──────────────────────────────────────────────── */
+    /* ── SEND RESULT ───────────────────────────────────── */
+    .send-result { margin-top: 13px; padding: 10px 14px; border-radius: 9px; font-size: .85rem; display: none; }
+    .send-result.ok  { display:block; background:#e6faf2; color:#15803d; border:1px solid #bbf7d0; }
+    .send-result.err { display:block; background:#fef2f2; color:#dc2626; border:1px solid #fecaca; }
+
+    /* ── EMPTY / LOADING ───────────────────────────────── */
+    .loading { text-align:center; padding:40px; color:var(--muted); font-size:.875rem; }
+    .empty   { text-align:center; padding:44px 20px; color:var(--muted); }
+    .empty big { display:block; font-size:38px; margin-bottom:8px; }
+
+    /* ── TOAST ─────────────────────────────────────────── */
     #toast {
-      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-      background: var(--text); color: #fff; padding: 13px 20px;
-      border-radius: 12px; font-size: .875rem;
-      box-shadow: 0 8px 28px rgba(0,0,0,.18);
-      transform: translateY(80px); opacity: 0; transition: all .32s cubic-bezier(.34,1.56,.64,1);
-      max-width: 320px; font-weight: 500; border-left: 4px solid var(--brand);
+      position:fixed; bottom:22px; right:22px; z-index:9999;
+      background:var(--text); color:#fff; padding:12px 18px; border-radius:11px;
+      font-size:.875rem; font-weight:500; max-width:300px;
+      box-shadow:0 8px 28px rgba(0,0,0,.18);
+      border-left:4px solid var(--brand);
+      transform:translateY(80px); opacity:0;
+      transition:all .3s cubic-bezier(.34,1.56,.64,1);
     }
-    #toast.show { transform: translateY(0); opacity: 1; }
-    #toast.success { border-left-color: var(--success); }
-    #toast.error   { border-left-color: var(--danger); }
-
-    .loading { text-align: center; padding: 40px; color: var(--muted); font-size: .875rem; }
-    .empty-state { text-align: center; padding: 48px 20px; color: var(--muted); }
-    .empty-state .ei { font-size: 40px; margin-bottom: 10px; }
-    .empty-state p { font-size: .875rem; }
-
-    #send-result { margin-top: 14px; font-size: .875rem; padding: 10px 14px; border-radius: 9px; display: none; }
-    #send-result.ok  { background: #e6faf2; color: #15803d; border: 1px solid #bbf7d0; display: block; }
-    #send-result.err { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; display: block; }
+    #toast.show { transform:translateY(0); opacity:1; }
+    #toast.success { border-left-color:var(--success); }
+    #toast.error   { border-left-color:var(--danger); }
   </style>
 </head>
 <body>
 
-<!-- ── Login ─────────────────────────────────────────────────── -->
+<!-- LOGIN -->
 <div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">🔔</div>
+  <div class="lbox">
+    <div class="lbox-icon">🔔</div>
     <h2>Notification Admin</h2>
     <p>MakeAcademy Push Notification Panel</p>
-    <input type="password" id="secret-input" placeholder="Enter admin secret" onkeydown="if(event.key==='Enter') doLogin()">
+    <input type="password" id="secret-input" placeholder="Enter admin password"
+           onkeydown="if(event.key==='Enter')doLogin()">
     <button onclick="doLogin()">Sign In →</button>
-    <div id="login-error">❌ Invalid secret. Try again.</div>
+    <div id="login-error">❌ Invalid password. Try again.</div>
   </div>
 </div>
 
-<!-- ── App ───────────────────────────────────────────────────── -->
+<!-- APP -->
 <div id="app">
   <header>
-    <div class="header-logo">
-      <div class="icon">🔔</div>
-      Make<span class="dot">Academy</span>&nbsp;Notifications
+    <div class="hlogo">
+      <div class="hlogo-icon">🔔</div>
+      <span>Make<b>Academy</b> Notifications</span>
     </div>
-    <div class="header-right">
-      <div class="status-dot">Server Online</div>
+    <div class="hright">
+      <div class="online-pill">Live</div>
       <button class="logout-btn" onclick="doLogout()">Sign Out</button>
     </div>
   </header>
@@ -397,31 +346,11 @@
 
     <!-- Stats -->
     <div class="stats-grid">
-      <div class="stat-card s-brand">
-        <div class="stat-icon">👥</div>
-        <div class="num" id="st-users">—</div>
-        <div class="lbl">Total Users</div>
-      </div>
-      <div class="stat-card s-green">
-        <div class="stat-icon">🔔</div>
-        <div class="num" id="st-sub">—</div>
-        <div class="lbl">Subscribed</div>
-      </div>
-      <div class="stat-card s-red">
-        <div class="stat-icon">🔕</div>
-        <div class="num" id="st-nosub">—</div>
-        <div class="lbl">Not Subscribed</div>
-      </div>
-      <div class="stat-card s-purple">
-        <div class="stat-icon">📤</div>
-        <div class="num" id="st-notifs">—</div>
-        <div class="lbl">Batches Sent</div>
-      </div>
-      <div class="stat-card s-warn">
-        <div class="stat-icon">📊</div>
-        <div class="num" id="st-pushes">—</div>
-        <div class="lbl">Total Pushes</div>
-      </div>
+      <div class="sc s1"><div class="sc-ico">👥</div><div class="num" id="st-users">—</div><div class="lbl">Total Users</div></div>
+      <div class="sc s2"><div class="sc-ico">🔔</div><div class="num" id="st-sub">—</div><div class="lbl">Subscribed</div></div>
+      <div class="sc s3"><div class="sc-ico">🔕</div><div class="num" id="st-nosub">—</div><div class="lbl">Not Subscribed</div></div>
+      <div class="sc s4"><div class="sc-ico">📤</div><div class="num" id="st-notifs">—</div><div class="lbl">Batches Sent</div></div>
+      <div class="sc s5"><div class="sc-ico">📊</div><div class="num" id="st-pushes">—</div><div class="lbl">Total Pushes</div></div>
     </div>
 
     <!-- Tabs -->
@@ -433,121 +362,79 @@
       <button class="tab-btn" onclick="switchTab('history',this)">📋 History</button>
     </div>
 
-    <!-- ── Send ─────────────────────────────────────────────── -->
+    <!-- SEND -->
     <div id="tab-send" class="tab-content active">
       <div class="card">
-        <div class="card-title"><div class="ct-icon">📤</div> Send Push Notification</div>
-
-        <div style="margin-bottom:16px;">
-          <label>Send To</label>
+        <div class="ctitle"><div class="ctitle-icon">📤</div> Send Push Notification</div>
+        <div style="margin-bottom:15px;">
+          <label class="flabel">Send To</label>
           <div class="send-target">
-            <button class="target-btn active" id="target-all" onclick="setTarget('all')">🌍 All Subscribers</button>
-            <button class="target-btn" id="target-selected" onclick="setTarget('selected')">✅ Selected Users</button>
+            <button class="tgt-btn active" id="target-all" onclick="setTarget('all')">🌍 All Subscribers</button>
+            <button class="tgt-btn" id="target-selected" onclick="setTarget('selected')">✅ Selected Users</button>
           </div>
         </div>
-
-        <div id="selected-panel" style="display:none;margin-bottom:16px;">
-          <label>Choose Subscribers</label>
-          <div class="sub-list" id="subscriber-checkboxes">
-            <div class="loading">Loading...</div>
-          </div>
-          <div style="margin-top:8px;font-size:.78rem;color:var(--muted);" id="selected-count">0 selected</div>
+        <div id="selected-panel" style="display:none;margin-bottom:15px;">
+          <label class="flabel">Choose Subscribers</label>
+          <div class="sub-list" id="subscriber-checkboxes"><div class="loading">Loading…</div></div>
+          <div style="margin-top:7px;font-size:.78rem;color:var(--muted);" id="selected-count">0 selected</div>
         </div>
-
-        <div class="form-row">
-          <div>
-            <label>Title *</label>
-            <input type="text" id="n-title" placeholder="e.g. New Course Available!">
-          </div>
-          <div>
-            <label>Tag (optional)</label>
-            <input type="text" id="n-tag" placeholder="e.g. course-alert">
-          </div>
+        <div class="frow">
+          <div><label class="flabel">Title *</label><input class="finput" type="text" id="n-title" placeholder="e.g. New Course Available!"></div>
+          <div><label class="flabel">Tag (optional)</label><input class="finput" type="text" id="n-tag" placeholder="e.g. course-alert"></div>
         </div>
-        <div class="form-row single">
-          <div>
-            <label>Message *</label>
-            <textarea id="n-body" placeholder="Notification message text..."></textarea>
-          </div>
+        <div class="frow one">
+          <div><label class="flabel">Message *</label><textarea class="finput" id="n-body" placeholder="Notification message…"></textarea></div>
         </div>
-        <div class="form-row">
-          <div>
-            <label>Link URL (optional)</label>
-            <input type="url" id="n-url" placeholder="https://makeacademy.in/courses.php">
-          </div>
-          <div>
-            <label>Icon URL (optional)</label>
-            <input type="url" id="n-icon" placeholder="leave blank for default">
-          </div>
+        <div class="frow">
+          <div><label class="flabel">Link URL</label><input class="finput" type="url" id="n-url" placeholder="https://makeacademy.in/courses.php"></div>
+          <div><label class="flabel">Icon URL</label><input class="finput" type="url" id="n-icon" placeholder="leave blank for default"></div>
         </div>
-
         <button class="btn btn-brand" onclick="sendNotification()" id="send-btn">📤 Send Notification</button>
-        <div id="send-result"></div>
+        <div class="send-result" id="send-result"></div>
       </div>
     </div>
 
-    <!-- ── Subscribers ──────────────────────────────────────── -->
+    <!-- SUBSCRIBERS -->
     <div id="tab-subscribers" class="tab-content">
       <div class="card">
-        <div class="card-title"><div class="ct-icon">✅</div> Subscribed Users</div>
-        <div class="table-toolbar">
-          <div class="search-box">
-            <input type="search" id="sub-search" placeholder="Search name or email..." oninput="renderSubTable()">
+        <div class="ctitle"><div class="ctitle-icon">✅</div> Subscribed Users</div>
+        <div class="toolbar">
+          <div class="search-wrap">
+            <input class="finput" type="search" id="sub-search" placeholder="Search name or email…" oninput="renderSubTable()">
           </div>
-          <select class="filter-select" id="sub-clg" onchange="renderSubTable()">
-            <option value="">All Colleges</option>
-          </select>
-          <button class="sort-btn" id="sort-sub-name" onclick="toggleSort('sub','Full_name')">
-            Name <span class="sort-arrow" id="arr-sub-Full_name">↕</span>
-          </button>
-          <button class="sort-btn" id="sort-sub-email" onclick="toggleSort('sub','user_email')">
-            Email <span class="sort-arrow" id="arr-sub-user_email">↕</span>
-          </button>
-          <button class="sort-btn" id="sort-sub-date" onclick="toggleSort('sub','created_at')">
-            Date <span class="sort-arrow" id="arr-sub-created_at">↕</span>
-          </button>
+          <button class="sort-btn" onclick="doSort('sub','Full_name')">Name <span id="arr-sub-Full_name">↕</span></button>
+          <button class="sort-btn" onclick="doSort('sub','user_email')">Email <span id="arr-sub-user_email">↕</span></button>
+          <button class="sort-btn" onclick="doSort('sub','created_at')">Date <span id="arr-sub-created_at">↕</span></button>
         </div>
-        <div id="subscribers-table"><div class="loading">Loading...</div></div>
-        <div class="table-count" id="sub-count"></div>
+        <div id="subscribers-table"><div class="loading">Loading…</div></div>
+        <div class="tc" id="sub-count"></div>
       </div>
     </div>
 
-    <!-- ── Non-Subscribers ──────────────────────────────────── -->
+    <!-- NOT SUBSCRIBED -->
     <div id="tab-non-subscribers" class="tab-content">
       <div class="card">
-        <div class="card-title"><div class="ct-icon">❌</div> Not Subscribed Users</div>
-        <div class="table-toolbar">
-          <div class="search-box">
-            <input type="search" id="nosub-search" placeholder="Search name or email..." oninput="renderNoSubTable()">
+        <div class="ctitle"><div class="ctitle-icon">❌</div> Not Subscribed Users</div>
+        <div class="toolbar">
+          <div class="search-wrap">
+            <input class="finput" type="search" id="nosub-search" placeholder="Search name or email…" oninput="renderNoSubTable()">
           </div>
-          <select class="filter-select" id="nosub-clg" onchange="renderNoSubTable()">
-            <option value="">All Colleges</option>
-          </select>
-          <button class="sort-btn" onclick="toggleSort('nosub','Full_name')">
-            Name <span class="sort-arrow" id="arr-nosub-Full_name">↕</span>
-          </button>
-          <button class="sort-btn" onclick="toggleSort('nosub','Email')">
-            Email <span class="sort-arrow" id="arr-nosub-Email">↕</span>
-          </button>
-          <button class="sort-btn" onclick="toggleSort('nosub','created_at')">
-            Date <span class="sort-arrow" id="arr-nosub-created_at">↕</span>
-          </button>
+          <button class="sort-btn" onclick="doSort('nosub','Full_name')">Name <span id="arr-nosub-Full_name">↕</span></button>
+          <button class="sort-btn" onclick="doSort('nosub','Email')">Email <span id="arr-nosub-Email">↕</span></button>
+          <button class="sort-btn" onclick="doSort('nosub','created_at')">Date <span id="arr-nosub-created_at">↕</span></button>
         </div>
-        <div id="non-subscribers-table"><div class="loading">Loading...</div></div>
-        <div class="table-count" id="nosub-count"></div>
+        <div id="non-subscribers-table"><div class="loading">Loading…</div></div>
+        <div class="tc" id="nosub-count"></div>
       </div>
     </div>
 
-    <!-- ── Schedule ─────────────────────────────────────────── -->
+    <!-- SCHEDULE -->
     <div id="tab-schedule" class="tab-content">
       <div class="card">
-        <div class="card-title"><div class="ct-icon">⏰</div> Automatic Weekly Notification</div>
-        <p style="font-size:.84rem;color:var(--muted);margin-bottom:22px;">
-          Automatically sends to all subscribers on the configured day &amp; time (IST).
-        </p>
-
-        <div style="margin-bottom:18px;">
-          <label>Send On Day</label>
+        <div class="ctitle"><div class="ctitle-icon">⏰</div> Automatic Weekly Notification</div>
+        <p style="font-size:.84rem;color:var(--muted);margin-bottom:20px;">Automatically sent to all subscribers on the configured day &amp; time (IST).</p>
+        <div style="margin-bottom:17px;">
+          <label class="flabel">Day of Week</label>
           <div class="day-pills">
             <div class="day-pill" data-day="0" onclick="selectDay(0)">Sun</div>
             <div class="day-pill" data-day="1" onclick="selectDay(1)">Mon</div>
@@ -558,107 +445,81 @@
             <div class="day-pill" data-day="6" onclick="selectDay(6)">Sat</div>
           </div>
         </div>
-
-        <div class="form-row">
-          <div>
-            <label>Hour (IST, 0–23)</label>
-            <input type="number" id="sch-hour" min="0" max="23" placeholder="10">
-          </div>
-          <div>
-            <label>Minute (0–59)</label>
-            <input type="number" id="sch-minute" min="0" max="59" placeholder="0">
-          </div>
+        <div class="frow">
+          <div><label class="flabel">Hour (IST 0–23)</label><input class="finput" type="number" id="sch-hour" min="0" max="23" placeholder="10"></div>
+          <div><label class="flabel">Minute (0–59)</label><input class="finput" type="number" id="sch-minute" min="0" max="59" placeholder="0"></div>
         </div>
-        <div class="form-row single">
-          <div><label>Notification Title</label>
-            <input type="text" id="sch-title" placeholder="🚀 MakeAcademy Weekly Update">
-          </div>
-        </div>
-        <div class="form-row single">
-          <div><label>Message</label>
-            <textarea id="sch-body" placeholder="New features and improvements are now live!"></textarea>
-          </div>
-        </div>
-        <div class="form-row single">
-          <div><label>Link URL</label>
-            <input type="url" id="sch-url" placeholder="https://makeacademy.in/dashcharts.php">
-          </div>
-        </div>
-
+        <div class="frow one"><div>
+          <label class="flabel">Title</label>
+          <input class="finput" type="text" id="sch-title" placeholder="🚀 MakeAcademy Weekly Update">
+        </div></div>
+        <div class="frow one"><div>
+          <label class="flabel">Message</label>
+          <textarea class="finput" id="sch-body" placeholder="New features and courses are live!"></textarea>
+        </div></div>
+        <div class="frow one"><div>
+          <label class="flabel">Link URL</label>
+          <input class="finput" type="url" id="sch-url" placeholder="https://makeacademy.in/dashcharts.php">
+        </div></div>
         <div class="toggle-row">
-          <label class="toggle">
-            <input type="checkbox" id="sch-enabled" checked>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="tgl"><input type="checkbox" id="sch-enabled" checked><span class="tgl-s"></span></label>
           <span>Enable automatic schedule</span>
         </div>
-
         <button class="btn btn-brand" onclick="saveSchedule()">💾 Save Schedule</button>
       </div>
     </div>
 
-    <!-- ── History ───────────────────────────────────────────── -->
+    <!-- HISTORY -->
     <div id="tab-history" class="tab-content">
       <div class="card">
-        <div class="card-title"><div class="ct-icon">📋</div> Notification History (Last 50)</div>
-        <div id="history-table"><div class="loading">Loading...</div></div>
+        <div class="ctitle"><div class="ctitle-icon">📋</div> Notification History (Last 50)</div>
+        <div id="history-table"><div class="loading">Loading…</div></div>
       </div>
     </div>
 
   </div>
 </div>
-
 <div id="toast"></div>
 
 <script>
-  const API = '';
-  let SECRET = '';
-  let sendTarget = 'all';
-  let selectedDay = 6;
-  let subscribersList   = [];
-  let nonSubscribersList = [];
+  let SECRET = '', sendTarget = 'all', selectedDay = 6;
+  let subList = [], nosubList = [];
+  const sort = { sub: {f:'created_at',d:'desc'}, nosub: {f:'created_at',d:'desc'} };
 
-  // Sort state: { field, dir } per table
-  const sortState = { sub: { field: 'created_at', dir: 'desc' }, nosub: { field: 'created_at', dir: 'desc' } };
-
-  // ── Login ────────────────────────────────────────────────────
+  // ── AUTH ──────────────────────────────────────────────
   async function doLogin() {
     const s = document.getElementById('secret-input').value.trim();
     if (!s) return;
-    const res = await fetch('/api/admin/stats', { headers: { 'x-admin-secret': s } });
-    if (res.ok) {
+    const r = await fetch('/api/admin/stats', { headers: {'x-admin-secret': s} });
+    if (r.ok) {
       SECRET = s;
-      sessionStorage.setItem('admin_secret', s);
+      sessionStorage.setItem('adm', s);
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('app').style.display = 'block';
-      loadStats();
-      loadSubscribers();
-      loadNonSubscribers();
+      loadStats(); loadSubs(); loadNoSubs();
     } else {
       document.getElementById('login-error').style.display = 'block';
     }
   }
-
-  function doLogout() { sessionStorage.removeItem('admin_secret'); location.reload(); }
-
+  function doLogout() { sessionStorage.removeItem('adm'); location.reload(); }
   window.addEventListener('DOMContentLoaded', () => {
-    const s = sessionStorage.getItem('admin_secret');
+    const s = sessionStorage.getItem('adm');
     if (s) { document.getElementById('secret-input').value = s; doLogin(); }
   });
 
-  // ── Tabs ─────────────────────────────────────────────────────
+  // ── TABS ──────────────────────────────────────────────
   function switchTab(name, btn) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('tab-' + name).classList.add('active');
     btn.classList.add('active');
-    if (name === 'schedule') loadSchedule();
-    if (name === 'history')  loadHistory();
+    if (name==='schedule') loadSchedule();
+    if (name==='history')  loadHistory();
   }
 
-  // ── Stats ─────────────────────────────────────────────────────
+  // ── STATS ─────────────────────────────────────────────
   async function loadStats() {
-    const d = await apiGet('/api/admin/stats');
+    const d = await ag('/api/admin/stats');
     if (!d) return;
     document.getElementById('st-users').textContent  = d.total_users;
     document.getElementById('st-sub').textContent    = d.subscribed;
@@ -667,311 +528,214 @@
     document.getElementById('st-pushes').textContent = d.total_pushes_sent;
   }
 
-  // ── Send target ───────────────────────────────────────────────
+  // ── SEND ──────────────────────────────────────────────
   function setTarget(t) {
     sendTarget = t;
-    document.getElementById('target-all').classList.toggle('active', t === 'all');
-    document.getElementById('target-selected').classList.toggle('active', t === 'selected');
-    document.getElementById('selected-panel').style.display = t === 'selected' ? 'block' : 'none';
+    document.getElementById('target-all').classList.toggle('active', t==='all');
+    document.getElementById('target-selected').classList.toggle('active', t==='selected');
+    document.getElementById('selected-panel').style.display = t==='selected' ? 'block' : 'none';
   }
 
-  // ── Load subscribers ──────────────────────────────────────────
-  async function loadSubscribers() {
-    const data = await apiGet('/api/admin/subscribers');
-    subscribersList = (data && data.data) ? data.data : [];
-    buildCollegeFilter('sub-clg', subscribersList, 'college');
+  async function loadSubs() {
+    const data = await ag('/api/admin/subscribers');
+    subList = data?.data || [];
     renderSubCheckboxes();
     renderSubTable();
   }
-
-  async function loadNonSubscribers() {
-    const data = await apiGet('/api/admin/non-subscribers');
-    nonSubscribersList = (data && data.data) ? data.data : [];
-    buildCollegeFilter('nosub-clg', nonSubscribersList, 'college');
+  async function loadNoSubs() {
+    const data = await ag('/api/admin/non-subscribers');
+    nosubList = data?.data || [];
     renderNoSubTable();
   }
 
-  function buildCollegeFilter(selectId, list, field) {
-    const sel = document.getElementById(selectId);
-    const colleges = [...new Set(list.map(u => u[field] || u.college || '').filter(Boolean))].sort();
+  function
     sel.innerHTML = '<option value="">All Colleges</option>' +
-      colleges.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+      cols.map(c => `<option value="${x(c)}">${x(c)}</option>`).join('');
   }
 
-  // ── Subscriber checkboxes (for send panel) ────────────────────
   function renderSubCheckboxes() {
-    const container = document.getElementById('subscriber-checkboxes');
-    if (!subscribersList.length) {
-      container.innerHTML = '<div style="color:var(--muted);padding:8px;font-size:.84rem;">No subscribers yet.</div>';
-      return;
-    }
-    container.innerHTML = `
-      <label class="select-all">
-        <input type="checkbox" id="chk-all-subs" onchange="toggleAllSubs(this.checked)">
-        Select All (${subscribersList.length})
+    const c = document.getElementById('subscriber-checkboxes');
+    if (!subList.length) { c.innerHTML = '<div style="padding:8px;font-size:.84rem;color:var(--muted)">No subscribers yet.</div>'; return; }
+    c.innerHTML = `
+      <label class="sub-list-item head">
+        <input type="checkbox" id="chk-all" onchange="toggleAll(this.checked)"> Select All (${subList.length})
       </label>
-      ${subscribersList.map(u => `
-        <label>
-          <input type="checkbox" class="sub-chk" value="${esc(u.user_email)}" onchange="updateSelectedCount()">
-          <span>${esc(u.Full_name || '—')} <span style="color:var(--muted);font-size:.78rem;">(${esc(u.user_email)})</span></span>
-        </label>
-      `).join('')}`;
+      ${subList.map(u => `
+        <label class="sub-list-item">
+          <input type="checkbox" class="sub-chk" value="${x(u.user_email)}" onchange="updCount()">
+          <span>${x(u.Full_name||'—')} <span style="color:var(--muted);font-size:.78rem;">(${x(u.user_email)})</span></span>
+        </label>`).join('')}`;
+  }
+  function toggleAll(v) { document.querySelectorAll('.sub-chk').forEach(c=>c.checked=v); updCount(); }
+  function updCount() {
+    document.getElementById('selected-count').textContent =
+      document.querySelectorAll('.sub-chk:checked').length + ' selected';
   }
 
-  function toggleAllSubs(checked) {
-    document.querySelectorAll('.sub-chk').forEach(c => c.checked = checked);
-    updateSelectedCount();
-  }
-  function updateSelectedCount() {
-    const n = document.querySelectorAll('.sub-chk:checked').length;
-    document.getElementById('selected-count').textContent = n + ' selected';
-  }
-
-  // ── Sort ──────────────────────────────────────────────────────
-  function toggleSort(table, field) {
-    const s = sortState[table];
-    if (s.field === field) { s.dir = s.dir === 'asc' ? 'desc' : 'asc'; }
-    else { s.field = field; s.dir = 'asc'; }
-    // Reset all arrows for this table
-    document.querySelectorAll(`[id^="arr-${table}-"]`).forEach(el => el.textContent = '↕');
-    const arrEl = document.getElementById(`arr-${table}-${field}`);
-    if (arrEl) arrEl.textContent = s.dir === 'asc' ? '↑' : '↓';
-    if (table === 'sub')   renderSubTable();
-    if (table === 'nosub') renderNoSubTable();
-  }
-
-  function sortList(list, field, dir) {
-    return [...list].sort((a, b) => {
-      const av = (a[field] || '').toString().toLowerCase();
-      const bv = (b[field] || '').toString().toLowerCase();
-      return dir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
-    });
-  }
-
-  // ── Render subscriber table ───────────────────────────────────
-  function renderSubTable() {
-    const search = (document.getElementById('sub-search').value || '').toLowerCase();
-    const clg    = document.getElementById('sub-clg').value;
-    const el     = document.getElementById('subscribers-table');
-
-    let list = subscribersList.filter(u => {
-      const matchSearch = !search ||
-        (u.Full_name  || '').toLowerCase().includes(search) ||
-        (u.user_email || '').toLowerCase().includes(search);
-      const matchClg = !clg || (u.college || '') === clg;
-      return matchSearch && matchClg;
-    });
-
-    list = sortList(list, sortState.sub.field, sortState.sub.dir);
-
-    if (!list.length) {
-      el.innerHTML = '<div class="empty-state"><div class="ei">🔍</div><p>No results found.</p></div>';
-      document.getElementById('sub-count').textContent = '0 results';
-      return;
-    }
-
-    el.innerHTML = `<div class="table-wrap"><table>
-      <thead><tr>
-        <th onclick="toggleSort('sub','Full_name')">Name ↕</th>
-        <th onclick="toggleSort('sub','user_email')">Email ↕</th>
-        <th>Phone</th>
-        <th>College</th>
-        <th onclick="toggleSort('sub','created_at')">Subscribed On ↕</th>
-      </tr></thead>
-      <tbody>
-        ${list.map(u => `<tr>
-          <td><strong>${esc(u.Full_name || '—')}</strong></td>
-          <td style="font-family:'DM Mono',monospace;font-size:.8rem;">${esc(u.user_email)}</td>
-          <td>${esc(u.Phone_number || '—')}</td>
-          <td>${u.college ? `<span class="badge badge-brand">${esc(u.college)}</span>` : '—'}</td>
-          <td style="color:var(--muted);font-size:.8rem;">${formatDate(u.created_at)}</td>
-        </tr>`).join('')}
-      </tbody>
-    </table></div>`;
-    document.getElementById('sub-count').textContent = `Showing ${list.length} of ${subscribersList.length} subscribers`;
-  }
-
-  // ── Render non-subscriber table ───────────────────────────────
-  function renderNoSubTable() {
-    const search = (document.getElementById('nosub-search').value || '').toLowerCase();
-    const clg    = document.getElementById('nosub-clg').value;
-    const el     = document.getElementById('non-subscribers-table');
-
-    let list = nonSubscribersList.filter(u => {
-      const matchSearch = !search ||
-        (u.Full_name || '').toLowerCase().includes(search) ||
-        (u.Email     || '').toLowerCase().includes(search);
-      const matchClg = !clg || (u.college || '') === clg;
-      return matchSearch && matchClg;
-    });
-
-    list = sortList(list, sortState.nosub.field, sortState.nosub.dir);
-
-    if (!list.length) {
-      el.innerHTML = '<div class="empty-state"><div class="ei">🎉</div><p>No results — or everyone subscribed!</p></div>';
-      document.getElementById('nosub-count').textContent = '0 results';
-      return;
-    }
-
-    el.innerHTML = `<div class="table-wrap"><table>
-      <thead><tr>
-        <th onclick="toggleSort('nosub','Full_name')">Name ↕</th>
-        <th onclick="toggleSort('nosub','Email')">Email ↕</th>
-        <th>Phone</th>
-        <th>College</th>
-        <th onclick="toggleSort('nosub','created_at')">Registered ↕</th>
-      </tr></thead>
-      <tbody>
-        ${list.map(u => `<tr>
-          <td><strong>${esc(u.Full_name || '—')}</strong></td>
-          <td style="font-family:'DM Mono',monospace;font-size:.8rem;">${esc(u.Email || '—')}</td>
-          <td>${esc(u.Phone_number || '—')}</td>
-          <td>${u.college ? `<span class="badge badge-warn">${esc(u.college)}</span>` : '—'}</td>
-          <td style="color:var(--muted);font-size:.8rem;">${formatDate(u.created_at)}</td>
-        </tr>`).join('')}
-      </tbody>
-    </table></div>`;
-    document.getElementById('nosub-count').textContent = `Showing ${list.length} of ${nonSubscribersList.length} users`;
-  }
-
-  // ── Send ──────────────────────────────────────────────────────
   async function sendNotification() {
-    const title = document.getElementById('n-title').value.trim();
-    const body  = document.getElementById('n-body').value.trim();
-    const url   = document.getElementById('n-url').value.trim();
-    const icon  = document.getElementById('n-icon').value.trim();
-    const tag   = document.getElementById('n-tag').value.trim();
-
-    if (!title || !body) { showToast('Title and message are required', 'error'); return; }
-
+    const title = v('n-title'), body = v('n-body'), url = v('n-url'), icon = v('n-icon'), tag = v('n-tag');
+    if (!title||!body) { toast('Title and message are required','error'); return; }
     let emails = null;
-    if (sendTarget === 'selected') {
-      emails = [...document.querySelectorAll('.sub-chk:checked')].map(c => c.value);
-      if (!emails.length) { showToast('Select at least one user', 'error'); return; }
+    if (sendTarget==='selected') {
+      emails = [...document.querySelectorAll('.sub-chk:checked')].map(c=>c.value);
+      if (!emails.length) { toast('Select at least one user','error'); return; }
     }
-
     const btn = document.getElementById('send-btn');
-    btn.textContent = '⏳ Sending...'; btn.disabled = true;
-
-    const res = await apiPost('/api/admin/send', { title, body, url, icon, tag, emails });
+    btn.textContent = '⏳ Sending…'; btn.disabled = true;
+    const res = await ap('/api/admin/send', {title,body,url,icon,tag,emails});
     btn.textContent = '📤 Send Notification'; btn.disabled = false;
-
-    const resultEl = document.getElementById('send-result');
-    if (res && res.success) {
-      showToast(`✅ Sent to ${res.sent} users`, 'success');
-      resultEl.className = 'ok';
-      resultEl.textContent = `✅ Delivered to ${res.sent} user${res.sent !== 1 ? 's' : ''}. Failed: ${res.failed}.`;
+    const el = document.getElementById('send-result');
+    if (res?.success) {
+      toast(`✅ Sent to ${res.sent} users`, 'success');
+      el.className = 'send-result ok';
+      el.textContent = `✅ Delivered to ${res.sent} user${res.sent!==1?'s':''}. Failed: ${res.failed}.`;
       loadStats();
     } else {
-      showToast('Failed to send', 'error');
-      resultEl.className = 'err';
-      resultEl.textContent = '❌ Send failed. Check server logs.';
+      toast('Send failed','error');
+      el.className = 'send-result err';
+      el.textContent = '❌ Send failed. Check server logs.';
     }
   }
 
-  // ── Schedule ──────────────────────────────────────────────────
+  // ── SORT ──────────────────────────────────────────────
+  function doSort(tbl, field) {
+    const s = sort[tbl];
+    s.d = (s.f===field) ? (s.d==='asc'?'desc':'asc') : 'asc';
+    s.f = field;
+    document.querySelectorAll(`[id^="arr-${tbl}-"]`).forEach(e => e.textContent='↕');
+    const el = document.getElementById(`arr-${tbl}-${field}`);
+    if (el) el.textContent = s.d==='asc'?'↑':'↓';
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('on'));
+    tbl==='sub' ? renderSubTable() : renderNoSubTable();
+  }
+  function sorted(list, f, d) {
+    return [...list].sort((a,b) => {
+      const av=(a[f]||'').toString().toLowerCase(), bv=(b[f]||'').toString().toLowerCase();
+      return d==='asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+    });
+  }
+
+  // ── SUBSCRIBER TABLE ──────────────────────────────────
+  function renderSubTable() {
+    const srch = (document.getElementById('sub-search').value||'').toLowerCase();
+    let list = subList.filter(u =>
+      (!srch || (u.Full_name||'').toLowerCase().includes(srch) || (u.user_email||'').toLowerCase().includes(srch)) &&
+    );
+    list = sorted(list, sort.sub.f, sort.sub.d);
+    const el = document.getElementById('subscribers-table');
+    if (!list.length) { el.innerHTML = '<div class="empty"><big>🔍</big>No results found.</div>'; document.getElementById('sub-count').textContent=''; return; }
+    el.innerHTML = `<div class="twrap"><table>
+      <thead><tr>
+        <th onclick="doSort('sub','Full_name')">Name ${sort.sub.f==='Full_name'?(sort.sub.d==='asc'?'↑':'↓'):'↕'}</th>
+        <th onclick="doSort('sub','user_email')">Email ${sort.sub.f==='user_email'?(sort.sub.d==='asc'?'↑':'↓'):'↕'}</th>
+        <th>Phone</th>
+        
+        <th onclick="doSort('sub','created_at')">Subscribed ${sort.sub.f==='created_at'?(sort.sub.d==='asc'?'↑':'↓'):'↕'}</th>
+      </tr></thead>
+      <tbody>${list.map(u=>`<tr>
+        <td><strong>${x(u.Full_name||'—')}</strong></td>
+        <td style="font-size:.79rem;color:var(--muted)">${x(u.user_email)}</td>
+        <td>${x(u.Phone_number||'—')}</td>
+        <td style="font-size:.79rem;color:var(--muted)">${fd(u.created_at)}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+    document.getElementById('sub-count').textContent = `Showing ${list.length} of ${subList.length} subscribers`;
+  }
+
+  // ── NON-SUBSCRIBER TABLE ──────────────────────────────
+  function renderNoSubTable() {
+    const srch = (document.getElementById('nosub-search').value||'').toLowerCase();
+    let list = nosubList.filter(u =>
+      (!srch || (u.Full_name||'').toLowerCase().includes(srch) || (u.Email||'').toLowerCase().includes(srch)) &&
+    );
+    list = sorted(list, sort.nosub.f, sort.nosub.d);
+    const el = document.getElementById('non-subscribers-table');
+    if (!list.length) { el.innerHTML = '<div class="empty"><big>🎉</big>No results — or everyone subscribed!</div>'; document.getElementById('nosub-count').textContent=''; return; }
+    el.innerHTML = `<div class="twrap"><table>
+      <thead><tr>
+        <th onclick="doSort('nosub','Full_name')">Name ${sort.nosub.f==='Full_name'?(sort.nosub.d==='asc'?'↑':'↓'):'↕'}</th>
+        <th onclick="doSort('nosub','Email')">Email ${sort.nosub.f==='Email'?(sort.nosub.d==='asc'?'↑':'↓'):'↕'}</th>
+        <th>Phone</th>
+        
+        <th onclick="doSort('nosub','created_at')">Registered ${sort.nosub.f==='created_at'?(sort.nosub.d==='asc'?'↑':'↓'):'↕'}</th>
+      </tr></thead>
+      <tbody>${list.map(u=>`<tr>
+        <td><strong>${x(u.Full_name||'—')}</strong></td>
+        <td style="font-size:.79rem;color:var(--muted)">${x(u.Email||'—')}</td>
+        <td>${x(u.Phone_number||'—')}</td>
+        <td style="font-size:.79rem;color:var(--muted)">${fd(u.created_at)}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+    document.getElementById('nosub-count').textContent = `Showing ${list.length} of ${nosubList.length} users`;
+  }
+
+  // ── SCHEDULE ──────────────────────────────────────────
   async function loadSchedule() {
-    const data = await apiGet('/api/admin/schedule');
-    if (!data || !data.data) return;
+    const data = await ag('/api/admin/schedule');
+    if (!data?.data) return;
     const c = data.data;
     selectedDay = parseInt(c.day);
-    document.querySelectorAll('.day-pill').forEach(p =>
-      p.classList.toggle('selected', parseInt(p.dataset.day) === selectedDay)
-    );
-    document.getElementById('sch-hour').value    = c.hour;
-    document.getElementById('sch-minute').value  = c.minute;
-    document.getElementById('sch-title').value   = c.title || '';
-    document.getElementById('sch-body').value    = c.body  || '';
-    document.getElementById('sch-url').value     = c.url   || '';
+    document.querySelectorAll('.day-pill').forEach(p => p.classList.toggle('sel', parseInt(p.dataset.day)===selectedDay));
+    document.getElementById('sch-hour').value   = c.hour;
+    document.getElementById('sch-minute').value = c.minute;
+    document.getElementById('sch-title').value  = c.title||'';
+    document.getElementById('sch-body').value   = c.body||'';
+    document.getElementById('sch-url').value    = c.url||'';
     document.getElementById('sch-enabled').checked = !!c.enabled;
   }
-
   function selectDay(d) {
     selectedDay = d;
-    document.querySelectorAll('.day-pill').forEach(p =>
-      p.classList.toggle('selected', parseInt(p.dataset.day) === d)
-    );
+    document.querySelectorAll('.day-pill').forEach(p => p.classList.toggle('sel', parseInt(p.dataset.day)===d));
   }
-
   async function saveSchedule() {
     const payload = {
-      day:     selectedDay,
-      hour:    parseInt(document.getElementById('sch-hour').value),
-      minute:  parseInt(document.getElementById('sch-minute').value) || 0,
-      title:   document.getElementById('sch-title').value.trim(),
-      body:    document.getElementById('sch-body').value.trim(),
-      url:     document.getElementById('sch-url').value.trim(),
+      day: selectedDay, hour: parseInt(v('sch-hour')), minute: parseInt(v('sch-minute'))||0,
+      title: v('sch-title'), body: v('sch-body'), url: v('sch-url'),
       enabled: document.getElementById('sch-enabled').checked,
     };
-    if (!payload.title || !payload.body) { showToast('Title and message are required', 'error'); return; }
-    const res = await apiPost('/api/admin/schedule', payload);
-    if (res && res.success) showToast('✅ Schedule saved!', 'success');
-    else showToast('Failed to save', 'error');
+    if (!payload.title||!payload.body) { toast('Title and message required','error'); return; }
+    const res = await ap('/api/admin/schedule', payload);
+    res?.success ? toast('✅ Schedule saved!','success') : toast('Save failed','error');
   }
 
-  // ── History ───────────────────────────────────────────────────
+  // ── HISTORY ───────────────────────────────────────────
   async function loadHistory() {
-    const data = await apiGet('/api/admin/history');
-    const el   = document.getElementById('history-table');
-    if (!data || !data.data.length) {
-      el.innerHTML = '<div class="empty-state"><div class="ei">📭</div><p>No history yet.</p></div>';
-      return;
-    }
-    el.innerHTML = `<div class="table-wrap"><table>
-      <thead><tr>
-        <th>Title</th><th>Message</th><th>Type</th><th>Sent</th><th>Failed</th><th>Date</th>
-      </tr></thead>
-      <tbody>
-        ${data.data.map(h => `<tr>
-          <td><strong>${esc(h.title)}</strong></td>
-          <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted);">${esc(h.body)}</td>
-          <td><span class="badge ${
-            h.target_type === 'scheduled' ? 'badge-purple' :
-            h.target_type === 'selected'  ? 'badge-warn'   : 'badge-green'
-          }">${h.target_type}</span></td>
-          <td style="color:var(--success);font-weight:700;">${h.sent_count}</td>
-          <td style="color:${h.failed_count > 0 ? 'var(--danger)' : 'var(--muted)'};">${h.failed_count}</td>
-          <td style="color:var(--muted);font-size:.8rem;">${formatDate(h.sent_at)}</td>
-        </tr>`).join('')}
-      </tbody>
+    const data = await ag('/api/admin/history');
+    const el = document.getElementById('history-table');
+    if (!data?.data?.length) { el.innerHTML='<div class="empty"><big>📭</big>No history yet.</div>'; return; }
+    el.innerHTML = `<div class="twrap"><table>
+      <thead><tr><th>Title</th><th>Message</th><th>Type</th><th>Sent</th><th>Failed</th><th>Date</th></tr></thead>
+      <tbody>${data.data.map(h=>`<tr>
+        <td><strong>${x(h.title)}</strong></td>
+        <td style="max-width:170px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted);font-size:.79rem">${x(h.body)}</td>
+        <td><span class="badge ${h.target_type==='scheduled'?'b-purple':h.target_type==='selected'?'b-warn':'b-green'}">${h.target_type}</span></td>
+        <td style="color:var(--success);font-weight:700">${h.sent_count}</td>
+        <td style="color:${h.failed_count>0?'var(--danger)':'var(--muted)'}">${h.failed_count}</td>
+        <td style="font-size:.79rem;color:var(--muted)">${fd(h.sent_at)}</td>
+      </tr>`).join('')}</tbody>
     </table></div>`;
   }
 
-  // ── Helpers ───────────────────────────────────────────────────
-  async function apiGet(url) {
+  // ── HELPERS ───────────────────────────────────────────
+  async function ag(url) {
+    try { const r = await fetch(url,{headers:{'x-admin-secret':SECRET}}); return await r.json(); }
+    catch(e){ console.error(e); return null; }
+  }
+  async function ap(url, body) {
     try {
-      const res = await fetch(url, { headers: { 'x-admin-secret': SECRET } });
-      return await res.json();
-    } catch (e) { console.error(e); return null; }
+      const r = await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','x-admin-secret':SECRET},body:JSON.stringify(body)});
+      return await r.json();
+    } catch(e){ console.error(e); return null; }
   }
+  function v(id) { return document.getElementById(id).value.trim(); }
+  function fd(d) { return d ? new Date(d).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'}) : '—'; }
+  function x(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-  async function apiPost(url, body) {
-    try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-secret': SECRET },
-        body: JSON.stringify(body),
-      });
-      return await res.json();
-    } catch (e) { console.error(e); return null; }
-  }
-
-  function formatDate(d) {
-    if (!d) return '—';
-    return new Date(d).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
-  }
-
-  function esc(str) {
-    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  let toastTimer;
-  function showToast(msg, type = '') {
+  let _tt;
+  function toast(msg, type='') {
     const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = 'show ' + type;
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.className = '', 3500);
+    t.textContent = msg; t.className = 'show ' + type;
+    clearTimeout(_tt); _tt = setTimeout(()=>t.className='', 3500);
   }
 </script>
 </body>
