@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MakeAcademy — Notification Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f0f4ff;
+      color: #1e293b;
+      min-height: 100vh;
+    }
+
+    /* ── Login ──────────────────────────────────────────────── */
+    #login-screen {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+    }
+    .login-box {
+      background: #fff; border-radius: 20px; padding: 40px;
+      width: 360px; box-shadow: 0 20px 60px rgba(0,0,0,.2);
+      text-align: center;
+    }
+    .login-box img { width: 80px; margin-bottom: 16px; border-radius: 12px; }
+    .login-box h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; }
+    .login-box p  { color: #64748b; font-size: .85rem; margin-bottom: 24px; }
+    .login-box input {
+      width: 100%; padding: 12px 16px; border: 2px solid #e2e8f0;
+      border-radius: 10px; font-size: .95rem; font-family: inherit;
+      margin-bottom: 14px; outline: none; transition: border .2s;
+    }
+    .login-box input:focus { border-color: #3b82f6; }
+    .login-box button {
+      width: 100%; padding: 13px; background: linear-gradient(135deg,#3b82f6,#6366f1);
+      color: #fff; border: none; border-radius: 10px; font-size: 1rem;
+      font-weight: 600; cursor: pointer; font-family: inherit;
+    }
+    #login-error { color: #ef4444; font-size: .85rem; margin-top: 10px; display: none; }
+
+    /* ── Layout ─────────────────────────────────────────────── */
+    #app { display: none; }
+
+    header {
+      background: linear-gradient(135deg,#3b82f6,#6366f1);
+      color: #fff; padding: 16px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(99,102,241,.3);
+    }
+    header .logo { font-size: 1.2rem; font-weight: 700; display: flex; gap: 10px; align-items: center; }
+    header .logo span { font-size: 1.5rem; }
+    header .logout-btn {
+      background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.4);
+      color: #fff; padding: 7px 16px; border-radius: 8px; cursor: pointer;
+      font-family: inherit; font-size: .85rem;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 28px 20px; }
+
+    /* ── Tabs ────────────────────────────────────────────────── */
+    .tabs {
+      display: flex; gap: 6px; background: #fff; padding: 6px;
+      border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.07);
+      margin-bottom: 24px; flex-wrap: wrap;
+    }
+    .tab-btn {
+      flex: 1; min-width: 120px; padding: 10px 16px; border: none; background: transparent;
+      border-radius: 10px; cursor: pointer; font-family: inherit; font-size: .88rem;
+      font-weight: 500; color: #64748b; transition: all .2s;
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg,#3b82f6,#6366f1);
+      color: #fff; box-shadow: 0 4px 12px rgba(99,102,241,.35);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ── Stat Cards ──────────────────────────────────────────── */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+      gap: 16px; margin-bottom: 24px;
+    }
+    .stat-card {
+      background: #fff; border-radius: 16px; padding: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06); text-align: center;
+    }
+    .stat-card .num { font-size: 2rem; font-weight: 700; }
+    .stat-card .lbl { font-size: .8rem; color: #64748b; margin-top: 4px; }
+    .stat-card.blue  .num { color: #3b82f6; }
+    .stat-card.green .num { color: #22c55e; }
+    .stat-card.red   .num { color: #ef4444; }
+    .stat-card.purple .num { color: #8b5cf6; }
+    .stat-card.orange .num { color: #f97316; }
+
+    /* ── Cards ───────────────────────────────────────────────── */
+    .card {
+      background: #fff; border-radius: 16px; padding: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06); margin-bottom: 20px;
+    }
+    .card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 16px; color: #1e293b; }
+
+    /* ── Form elements ───────────────────────────────────────── */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .form-row.single { grid-template-columns: 1fr; }
+    label { display: block; font-size: .8rem; font-weight: 600; color: #475569; margin-bottom: 5px; }
+    input[type=text], input[type=number], input[type=url], textarea, select {
+      width: 100%; padding: 10px 14px; border: 2px solid #e2e8f0; border-radius: 10px;
+      font-family: inherit; font-size: .9rem; outline: none; transition: border .2s;
+      background: #f8fafc;
+    }
+    input:focus, textarea:focus, select:focus { border-color: #3b82f6; background: #fff; }
+    textarea { min-height: 80px; resize: vertical; }
+
+    .btn {
+      padding: 11px 24px; border: none; border-radius: 10px; cursor: pointer;
+      font-family: inherit; font-size: .9rem; font-weight: 600; transition: all .2s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg,#3b82f6,#6366f1); color: #fff;
+      box-shadow: 0 4px 14px rgba(99,102,241,.35);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(99,102,241,.45); }
+    .btn-green  { background: #22c55e; color: #fff; }
+    .btn-green:hover  { background: #16a34a; }
+    .btn-red    { background: #ef4444; color: #fff; }
+    .btn-gray   { background: #e2e8f0; color: #475569; }
+    .btn-sm     { padding: 6px 14px; font-size: .8rem; }
+
+    /* ── Table ───────────────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    thead th {
+      background: #f1f5f9; padding: 10px 14px; text-align: left;
+      font-weight: 600; color: #475569; border-bottom: 2px solid #e2e8f0;
+    }
+    tbody tr:hover { background: #f8fafc; }
+    tbody td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #334155; }
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 20px;
+      font-size: .75rem; font-weight: 600;
+    }
+    .badge-green  { background: #dcfce7; color: #16a34a; }
+    .badge-red    { background: #fee2e2; color: #ef4444; }
+    .badge-blue   { background: #dbeafe; color: #2563eb; }
+    .badge-purple { background: #ede9fe; color: #7c3aed; }
+
+    /* ── Checkbox selection ──────────────────────────────────── */
+    .select-all-row {
+      display: flex; gap: 10px; align-items: center;
+      margin-bottom: 12px; flex-wrap: wrap;
+    }
+    input[type=checkbox] { width: 16px; height: 16px; accent-color: #3b82f6; cursor: pointer; }
+
+    /* ── Send panel ──────────────────────────────────────────── */
+    .send-target {
+      display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap;
+    }
+    .target-btn {
+      padding: 8px 18px; border-radius: 20px; border: 2px solid #e2e8f0;
+      cursor: pointer; font-family: inherit; font-size: .85rem; font-weight: 500;
+      background: #fff; color: #475569; transition: all .2s;
+    }
+    .target-btn.active {
+      border-color: #3b82f6; background: #eff6ff; color: #2563eb;
+    }
+
+    /* ── Toast ───────────────────────────────────────────────── */
+    #toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+      background: #1e293b; color: #fff; padding: 14px 20px; border-radius: 12px;
+      font-size: .9rem; box-shadow: 0 8px 24px rgba(0,0,0,.2);
+      transform: translateY(80px); opacity: 0; transition: all .35s;
+      max-width: 320px;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.success { background: #16a34a; }
+    #toast.error   { background: #dc2626; }
+
+    /* ── Schedule day pills ──────────────────────────────────── */
+    .day-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .day-pill {
+      padding: 7px 16px; border: 2px solid #e2e8f0; border-radius: 20px;
+      cursor: pointer; font-size: .83rem; font-weight: 500; background: #fff;
+      color: #475569; transition: all .2s;
+    }
+    .day-pill.selected { border-color: #3b82f6; background: #eff6ff; color: #2563eb; }
+
+    .loading { text-align: center; padding: 40px; color: #94a3b8; }
+
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+      .tabs { gap: 4px; }
+      .tab-btn { min-width: 90px; font-size: .8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Login ──────────────────────────────────────────────────── -->
+<div id="login-screen">
+  <div class="login-box">
+    <span style="font-size:48px;">🔔</span>
+    <h2>Notification Admin</h2>
+    <p>MakeAcademy Push Notification Panel</p>
+    <input type="password" id="secret-input" placeholder="Enter admin secret" onkeydown="if(event.key==='Enter') doLogin()">
+    <button onclick="doLogin()">Login</button>
+    <div id="login-error">❌ Invalid secret. Try again.</div>
+  </div>
+</div>
+
+<!-- ── App ────────────────────────────────────────────────────── -->
+<div id="app">
+  <header>
+    <div class="logo"><span>🔔</span> MakeAcademy Notifications</div>
+    <button class="logout-btn" onclick="doLogout()">Logout</button>
+  </header>
+
+  <div class="container">
+
+    <!-- Stats -->
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card blue">  <div class="num" id="st-users">—</div><div class="lbl">Total Users</div></div>
+      <div class="stat-card green"> <div class="num" id="st-sub">—</div><div class="lbl">Subscribed 🔔</div></div>
+      <div class="stat-card red">   <div class="num" id="st-nosub">—</div><div class="lbl">Not Subscribed</div></div>
+      <div class="stat-card purple"><div class="num" id="st-notifs">—</div><div class="lbl">Notifications Sent</div></div>
+      <div class="stat-card orange"><div class="num" id="st-pushes">—</div><div class="lbl">Total Pushes</div></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('send')">📤 Send Notification</button>
+      <button class="tab-btn" onclick="switchTab('subscribers')">✅ Subscribers</button>
+      <button class="tab-btn" onclick="switchTab('non-subscribers')">❌ Not Subscribed</button>
+      <button class="tab-btn" onclick="switchTab('schedule')">⏰ Schedule</button>
+      <button class="tab-btn" onclick="switchTab('history')">📋 History</button>
+    </div>
+
+    <!-- ── Tab: Send ──────────────────────────────────────────── -->
+    <div id="tab-send" class="tab-content active">
+      <div class="card">
+        <h3>📤 Send Push Notification</h3>
+
+        <div style="margin-bottom:16px;">
+          <label>Send To</label>
+          <div class="send-target">
+            <button class="target-btn active" id="target-all" onclick="setTarget('all')">🌍 All Subscribers</button>
+            <button class="target-btn" id="target-selected" onclick="setTarget('selected')">✅ Selected Users</button>
+          </div>
+        </div>
+
+        <!-- Selected users list (hidden by default) -->
+        <div id="selected-panel" style="display:none;margin-bottom:16px;">
+          <label>Choose subscribers to notify</label>
+          <div style="border:2px solid #e2e8f0;border-radius:10px;max-height:200px;overflow-y:auto;padding:10px;" id="subscriber-checkboxes">
+            <div class="loading">Loading subscribers...</div>
+          </div>
+          <div style="margin-top:8px;font-size:.82rem;color:#64748b;" id="selected-count">0 selected</div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label>Title *</label>
+            <input type="text" id="n-title" placeholder="e.g. New Course Available!">
+          </div>
+          <div>
+            <label>Tag (optional)</label>
+            <input type="text" id="n-tag" placeholder="e.g. course-alert">
+          </div>
+        </div>
+        <div class="form-row single">
+          <div>
+            <label>Message *</label>
+            <textarea id="n-body" placeholder="Notification message text..."></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label>Link URL (optional)</label>
+            <input type="url" id="n-url" placeholder="https://makeacademy.in/courses.php">
+          </div>
+          <div>
+            <label>Icon URL (optional)</label>
+            <input type="url" id="n-icon" placeholder="leave blank for default">
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="sendNotification()" id="send-btn">
+          📤 Send Notification
+        </button>
+        <div id="send-result" style="margin-top:12px;font-size:.88rem;"></div>
+      </div>
+    </div>
+
+    <!-- ── Tab: Subscribers ───────────────────────────────────── -->
+    <div id="tab-subscribers" class="tab-content">
+      <div class="card">
+        <h3>✅ Users Who Allowed Notifications</h3>
+        <div id="subscribers-table"><div class="loading">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- ── Tab: Non-Subscribers ───────────────────────────────── -->
+    <div id="tab-non-subscribers" class="tab-content">
+      <div class="card">
+        <h3>❌ Users Who Haven't Subscribed</h3>
+        <div id="non-subscribers-table"><div class="loading">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- ── Tab: Schedule ─────────────────────────────────────── -->
+    <div id="tab-schedule" class="tab-content">
+      <div class="card">
+        <h3>⏰ Automatic Weekly Update Notification</h3>
+        <p style="font-size:.85rem;color:#64748b;margin-bottom:20px;">
+          This notification is automatically sent to all subscribers on the configured day and time (IST).
+        </p>
+
+        <div style="margin-bottom:16px;">
+          <label>Send On Day</label>
+          <div class="day-pills">
+            <div class="day-pill" data-day="0" onclick="selectDay(0)">Sunday</div>
+            <div class="day-pill" data-day="1" onclick="selectDay(1)">Monday</div>
+            <div class="day-pill" data-day="2" onclick="selectDay(2)">Tuesday</div>
+            <div class="day-pill" data-day="3" onclick="selectDay(3)">Wednesday</div>
+            <div class="day-pill" data-day="4" onclick="selectDay(4)">Thursday</div>
+            <div class="day-pill" data-day="5" onclick="selectDay(5)">Friday</div>
+            <div class="day-pill" data-day="6" onclick="selectDay(6)">Saturday</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label>Hour (IST, 0–23)</label>
+            <input type="number" id="sch-hour" min="0" max="23" placeholder="10">
+          </div>
+          <div>
+            <label>Minute (0–59)</label>
+            <input type="number" id="sch-minute" min="0" max="59" placeholder="0">
+          </div>
+        </div>
+        <div class="form-row single">
+          <div>
+            <label>Notification Title</label>
+            <input type="text" id="sch-title" placeholder="🚀 MakeAcademy Weekly Update">
+          </div>
+        </div>
+        <div class="form-row single">
+          <div>
+            <label>Notification Message</label>
+            <textarea id="sch-body" placeholder="New features, courses and improvements are now live!"></textarea>
+          </div>
+        </div>
+        <div class="form-row single">
+          <div>
+            <label>Link URL</label>
+            <input type="url" id="sch-url" placeholder="https://makeacademy.in/dashcharts.php">
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+          <label style="margin:0;font-size:.9rem;">Enable Schedule</label>
+          <input type="checkbox" id="sch-enabled" style="width:20px;height:20px;" checked>
+        </div>
+
+        <button class="btn btn-primary" onclick="saveSchedule()">💾 Save Schedule</button>
+      </div>
+    </div>
+
+    <!-- ── Tab: History ───────────────────────────────────────── -->
+    <div id="tab-history" class="tab-content">
+      <div class="card">
+        <h3>📋 Notification History (Last 50)</h3>
+        <div id="history-table"><div class="loading">Loading...</div></div>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+</div><!-- /app -->
+
+<div id="toast"></div>
+
+<script>
+  const API = '';  // same origin
+  let SECRET = '';
+  let sendTarget = 'all';
+  let selectedDay = 6;
+  let subscribersList = [];
+
+  // ── Login ─────────────────────────────────────────────────────
+  async function doLogin() {
+    const s = document.getElementById('secret-input').value.trim();
+    if (!s) return;
+    // Test secret against stats endpoint
+    const res = await fetch(`${API}/api/admin/stats`, {
+      headers: { 'x-admin-secret': s }
+    });
+    if (res.ok) {
+      SECRET = s;
+      sessionStorage.setItem('admin_secret', s);
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      loadStats();
+      loadSubscriberCheckboxes();
+      loadSubscribersTable();
+    } else {
+      document.getElementById('login-error').style.display = 'block';
+    }
+  }
+
+  function doLogout() {
+    sessionStorage.removeItem('admin_secret');
+    location.reload();
+  }
+
+  // Auto-login from session
+  window.addEventListener('DOMContentLoaded', () => {
+    const s = sessionStorage.getItem('admin_secret');
+    if (s) {
+      document.getElementById('secret-input').value = s;
+      doLogin();
+    }
+  });
+
+  // ── Tabs ──────────────────────────────────────────────────────
+  function switchTab(name) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.target.classList.add('active');
+
+    if (name === 'subscribers')     loadSubscribersTable();
+    if (name === 'non-subscribers') loadNonSubscribersTable();
+    if (name === 'schedule')        loadSchedule();
+    if (name === 'history')         loadHistory();
+  }
+
+  // ── Stats ─────────────────────────────────────────────────────
+  async function loadStats() {
+    const data = await apiGet('/api/admin/stats');
+    if (!data) return;
+    document.getElementById('st-users').textContent  = data.total_users;
+    document.getElementById('st-sub').textContent    = data.subscribed;
+    document.getElementById('st-nosub').textContent  = data.not_subscribed;
+    document.getElementById('st-notifs').textContent = data.notifications_sent;
+    document.getElementById('st-pushes').textContent = data.total_pushes_sent;
+  }
+
+  // ── Send target ───────────────────────────────────────────────
+  function setTarget(t) {
+    sendTarget = t;
+    document.getElementById('target-all').classList.toggle('active', t === 'all');
+    document.getElementById('target-selected').classList.toggle('active', t === 'selected');
+    document.getElementById('selected-panel').style.display = t === 'selected' ? 'block' : 'none';
+  }
+
+  async function loadSubscriberCheckboxes() {
+    const data = await apiGet('/api/admin/subscribers');
+    if (!data) return;
+    subscribersList = data.data || [];
+    const container = document.getElementById('subscriber-checkboxes');
+    if (!subscribersList.length) {
+      container.innerHTML = '<div style="color:#94a3b8;font-size:.85rem;padding:10px;">No subscribers yet.</div>';
+      return;
+    }
+    container.innerHTML = `
+      <div style="margin-bottom:8px;">
+        <label style="display:flex;gap:8px;align-items:center;cursor:pointer;">
+          <input type="checkbox" id="chk-all-subs" onchange="toggleAllSubs(this.checked)"> <strong>Select All</strong>
+        </label>
+      </div>
+      ${subscribersList.map(u => `
+        <label style="display:flex;gap:8px;align-items:center;cursor:pointer;padding:4px 0;">
+          <input type="checkbox" class="sub-chk" value="${u.user_email}" onchange="updateSelectedCount()">
+          <span>${u.Full_name || '—'} <span style="color:#94a3b8;font-size:.8rem;">(${u.user_email})</span></span>
+        </label>
+      `).join('')}
+    `;
+  }
+
+  function toggleAllSubs(checked) {
+    document.querySelectorAll('.sub-chk').forEach(c => c.checked = checked);
+    updateSelectedCount();
+  }
+
+  function updateSelectedCount() {
+    const n = document.querySelectorAll('.sub-chk:checked').length;
+    document.getElementById('selected-count').textContent = n + ' selected';
+  }
+
+  // ── Send notification ─────────────────────────────────────────
+  async function sendNotification() {
+    const title = document.getElementById('n-title').value.trim();
+    const body  = document.getElementById('n-body').value.trim();
+    const url   = document.getElementById('n-url').value.trim();
+    const icon  = document.getElementById('n-icon').value.trim();
+    const tag   = document.getElementById('n-tag').value.trim();
+
+    if (!title || !body) { showToast('Title and message are required', 'error'); return; }
+
+    let emails = null;
+    if (sendTarget === 'selected') {
+      emails = [...document.querySelectorAll('.sub-chk:checked')].map(c => c.value);
+      if (!emails.length) { showToast('Please select at least one user', 'error'); return; }
+    }
+
+    const btn = document.getElementById('send-btn');
+    btn.textContent = '⏳ Sending...'; btn.disabled = true;
+
+    const res = await apiPost('/api/admin/send', { title, body, url, icon, tag, emails });
+    btn.textContent = '📤 Send Notification'; btn.disabled = false;
+
+    if (res && res.success) {
+      showToast(`✅ Sent: ${res.sent} delivered, ${res.failed} failed`, 'success');
+      document.getElementById('send-result').innerHTML =
+        `<span style="color:#16a34a;">✅ Sent to ${res.sent} users. Failed: ${res.failed}.</span>`;
+      loadStats();
+    } else {
+      showToast('Failed to send', 'error');
+    }
+  }
+
+  // ── Subscribers table ─────────────────────────────────────────
+  async function loadSubscribersTable() {
+    const data = await apiGet('/api/admin/subscribers');
+    const el   = document.getElementById('subscribers-table');
+    if (!data || !data.data.length) {
+      el.innerHTML = '<div class="loading">No subscribers yet.</div>'; return;
+    }
+    el.innerHTML = `
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Name</th><th>Email</th><th>Phone</th><th>Subscribed On</th>
+          </tr></thead>
+          <tbody>
+            ${data.data.map(u => `<tr>
+              <td>${u.Full_name || '—'}</td>
+              <td>${u.user_email}</td>
+              <td>${u.Phone_number || '—'}</td>
+              <td>${formatDate(u.created_at)}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  // ── Non-subscribers table ─────────────────────────────────────
+  async function loadNonSubscribersTable() {
+    const data = await apiGet('/api/admin/non-subscribers');
+    const el   = document.getElementById('non-subscribers-table');
+    if (!data || !data.data.length) {
+      el.innerHTML = '<div class="loading">All users have subscribed! 🎉</div>'; return;
+    }
+    el.innerHTML = `
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Name</th><th>Email</th><th>Phone</th><th>Registered On</th>
+          </tr></thead>
+          <tbody>
+            ${data.data.map(u => `<tr>
+              <td>${u.Full_name || '—'}</td>
+              <td>${u.Email}</td>
+              <td>${u.Phone_number || '—'}</td>
+              <td>${formatDate(u.created_at)}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  // ── Schedule ──────────────────────────────────────────────────
+  async function loadSchedule() {
+    const data = await apiGet('/api/admin/schedule');
+    if (!data || !data.data) return;
+    const c = data.data;
+    selectedDay = parseInt(c.day);
+    document.querySelectorAll('.day-pill').forEach(p => {
+      p.classList.toggle('selected', parseInt(p.dataset.day) === selectedDay);
+    });
+    document.getElementById('sch-hour').value   = c.hour;
+    document.getElementById('sch-minute').value = c.minute;
+    document.getElementById('sch-title').value  = c.title || '';
+    document.getElementById('sch-body').value   = c.body  || '';
+    document.getElementById('sch-url').value    = c.url   || '';
+    document.getElementById('sch-enabled').checked = !!c.enabled;
+  }
+
+  function selectDay(d) {
+    selectedDay = d;
+    document.querySelectorAll('.day-pill').forEach(p => {
+      p.classList.toggle('selected', parseInt(p.dataset.day) === d);
+    });
+  }
+
+  async function saveSchedule() {
+    const payload = {
+      day:     selectedDay,
+      hour:    parseInt(document.getElementById('sch-hour').value),
+      minute:  parseInt(document.getElementById('sch-minute').value) || 0,
+      title:   document.getElementById('sch-title').value.trim(),
+      body:    document.getElementById('sch-body').value.trim(),
+      url:     document.getElementById('sch-url').value.trim(),
+      enabled: document.getElementById('sch-enabled').checked,
+    };
+    if (!payload.title || !payload.body) { showToast('Title and message are required', 'error'); return; }
+    const res = await apiPost('/api/admin/schedule', payload);
+    if (res && res.success) {
+      showToast('✅ Schedule saved!', 'success');
+    } else {
+      showToast('Failed to save schedule', 'error');
+    }
+  }
+
+  // ── History ───────────────────────────────────────────────────
+  async function loadHistory() {
+    const data = await apiGet('/api/admin/history');
+    const el   = document.getElementById('history-table');
+    if (!data || !data.data.length) {
+      el.innerHTML = '<div class="loading">No history yet.</div>'; return;
+    }
+    el.innerHTML = `
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Title</th><th>Message</th><th>Type</th><th>Sent</th><th>Failed</th><th>Date</th>
+          </tr></thead>
+          <tbody>
+            ${data.data.map(h => `<tr>
+              <td><strong>${h.title}</strong></td>
+              <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${h.body}</td>
+              <td><span class="badge ${h.target_type === 'scheduled' ? 'badge-purple' : h.target_type === 'selected' ? 'badge-blue' : 'badge-green'}">${h.target_type}</span></td>
+              <td style="color:#16a34a;font-weight:600;">${h.sent_count}</td>
+              <td style="color:${h.failed_count > 0 ? '#ef4444' : '#94a3b8'}">${h.failed_count}</td>
+              <td>${formatDate(h.sent_at)}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  // ── Helpers ───────────────────────────────────────────────────
+  async function apiGet(url) {
+    try {
+      const res = await fetch(url, { headers: { 'x-admin-secret': SECRET } });
+      return await res.json();
+    } catch (e) { console.error(e); return null; }
+  }
+
+  async function apiPost(url, body) {
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-secret': SECRET },
+        body: JSON.stringify(body),
+      });
+      return await res.json();
+    } catch (e) { console.error(e); return null; }
+  }
+
+  function formatDate(d) {
+    if (!d) return '—';
+    return new Date(d).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+  }
+
+  let toastTimer;
+  function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'show ' + type;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.className = '', 3500);
+  }
+</script>
+</body>
+</html>
