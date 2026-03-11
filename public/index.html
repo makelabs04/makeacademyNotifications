@@ -538,19 +538,14 @@
 
   async function loadSubs() {
     const data = await ag('/api/admin/subscribers');
-    subList = data?.data || [];
+    subList = (data && data.data) || [];
     renderSubCheckboxes();
     renderSubTable();
   }
   async function loadNoSubs() {
     const data = await ag('/api/admin/non-subscribers');
-    nosubList = data?.data || [];
+    nosubList = (data && data.data) || [];
     renderNoSubTable();
-  }
-
-  function
-    sel.innerHTML = '<option value="">All Colleges</option>' +
-      cols.map(c => `<option value="${x(c)}">${x(c)}</option>`).join('');
   }
 
   function renderSubCheckboxes() {
@@ -585,7 +580,7 @@
     const res = await ap('/api/admin/send', {title,body,url,icon,tag,emails});
     btn.textContent = '📤 Send Notification'; btn.disabled = false;
     const el = document.getElementById('send-result');
-    if (res?.success) {
+    if (res && res.success) {
       toast(`✅ Sent to ${res.sent} users`, 'success');
       el.className = 'send-result ok';
       el.textContent = `✅ Delivered to ${res.sent} user${res.sent!==1?'s':''}. Failed: ${res.failed}.`;
@@ -619,7 +614,7 @@
   function renderSubTable() {
     const srch = (document.getElementById('sub-search').value||'').toLowerCase();
     let list = subList.filter(u =>
-      (!srch || (u.Full_name||'').toLowerCase().includes(srch) || (u.user_email||'').toLowerCase().includes(srch)) &&
+      (!srch || (u.Full_name||'').toLowerCase().includes(srch) || (u.user_email||'').toLowerCase().includes(srch))
     );
     list = sorted(list, sort.sub.f, sort.sub.d);
     const el = document.getElementById('subscribers-table');
@@ -646,7 +641,7 @@
   function renderNoSubTable() {
     const srch = (document.getElementById('nosub-search').value||'').toLowerCase();
     let list = nosubList.filter(u =>
-      (!srch || (u.Full_name||'').toLowerCase().includes(srch) || (u.Email||'').toLowerCase().includes(srch)) &&
+      (!srch || (u.Full_name||'').toLowerCase().includes(srch) || (u.Email||'').toLowerCase().includes(srch))
     );
     list = sorted(list, sort.nosub.f, sort.nosub.d);
     const el = document.getElementById('non-subscribers-table');
@@ -672,7 +667,7 @@
   // ── SCHEDULE ──────────────────────────────────────────
   async function loadSchedule() {
     const data = await ag('/api/admin/schedule');
-    if (!data?.data) return;
+    if (!data || !data.data) return;
     const c = data.data;
     selectedDay = parseInt(c.day);
     document.querySelectorAll('.day-pill').forEach(p => p.classList.toggle('sel', parseInt(p.dataset.day)===selectedDay));
@@ -695,14 +690,14 @@
     };
     if (!payload.title||!payload.body) { toast('Title and message required','error'); return; }
     const res = await ap('/api/admin/schedule', payload);
-    res?.success ? toast('✅ Schedule saved!','success') : toast('Save failed','error');
+    res && res.success ? toast('✅ Schedule saved!','success') : toast('Save failed','error');
   }
 
   // ── HISTORY ───────────────────────────────────────────
   async function loadHistory() {
     const data = await ag('/api/admin/history');
     const el = document.getElementById('history-table');
-    if (!data?.data?.length) { el.innerHTML='<div class="empty"><big>📭</big>No history yet.</div>'; return; }
+    if (!data || !data.data || !data.data.length) { el.innerHTML='<div class="empty"><big>📭</big>No history yet.</div>'; return; }
     el.innerHTML = `<div class="twrap"><table>
       <thead><tr><th>Title</th><th>Message</th><th>Type</th><th>Sent</th><th>Failed</th><th>Date</th></tr></thead>
       <tbody>${data.data.map(h=>`<tr>
