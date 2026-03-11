@@ -1,9 +1,3 @@
-/**
- * scheduler.js
- * Checks every minute if it's time to send the weekly update notification.
- * Config is read from DB (ma_schedule_config) with .env as fallback.
- * Admin can call scheduler.reload() after updating schedule from admin panel.
- */
 require('dotenv').config();
 const webpush = require('web-push');
 const db      = require('./db');
@@ -15,13 +9,14 @@ webpush.setVapidDetails(
 );
 
 let _interval  = null;
-let _lastFired = null; // prevent double-fire within same minute
+let _lastFired = null;
 
 async function getConfig() {
   try {
     const [rows] = await db.execute('SELECT * FROM ma_schedule_config ORDER BY id DESC LIMIT 1');
     if (rows.length > 0 && rows[0].enabled) return rows[0];
-  } catch (e) { /* table may not exist yet on first boot */ }
+    if (rows.length > 0 && !rows[0].enabled) return null; // disabled in DB
+  } catch (e) { /* table may not exist yet */ }
 
   // Fallback to .env
   return {
@@ -69,52 +64,66 @@ async function sendScheduledNotification(config) {
       }
     }
 
-    // Log to history
-    await db.execute(
-      `INSERT INTO ma_notification_history (title, body, url, sent_count, failed_count, target_type, sent_at)
-       VALUES (?, ?, ?, ?, ?, 'scheduled', NOW())`,
-      [config.title, config.body, config.url, sent, failed]
-    );
+    try {
+      await db.execute(
+        `INSERT INTO ma_notification_history (title, body, url, sent_count, failed_count, target_type, sent_at)
+         VALUES (?, ?, ?, ?, ?, 'scheduled', NOW())`,
+        [config.title, config.body, config.url, sent, failed]
+      );
+    } catch(e) {}
 
     console.log(`[scheduler] Weekly update sent — ${sent} delivered, ${failed} failed.`);
   } catch (err) {
-    console.error('[scheduler] Error sending scheduled notification:', err.message);
+    console.error('[scheduler] Error:', err.message);
   }
+}
+
+function getISTTime() {
+  // IST = UTC+5:30
+  const now = new Date();
+  const utcMs = now.getTime() + (now.getTimezoneOffset() * 60000);
+  const istMs = utcMs + (5.5 * 3600000);
+  return new Date(istMs);
 }
 
 async function tick() {
   const config = await getConfig();
   if (!config || !config.enabled) return;
 
-  // Get current IST time
-  const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-  const currentDay    = now.getDay();
-  const currentHour   = now.getHours();
-  const currentMinute = now.getMinutes();
+  const ist = getISTTime();
+  const day    = ist.getDay();
+  const hour   = ist.getHours();
+  const minute = ist.getMinutes();
 
-  // Build a fire key so we don't fire twice in the same minute
-  const fireKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}-${currentHour}-${currentMinute}`;
+  // Log every tick so we can verify IST time in server logs
+  process.stdout.write(
+    `[scheduler] IST=${ist.toISOString().replace('T',' ').slice(0,16)} ` +
+    `(${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][day]} ${hour}:${String(minute).padStart(2,'0')}) | ` +
+    `Target: day=${config.day} hour=${config.hour} min=${config.minute}\n`
+  );
+
+  const fireKey = `${ist.getFullYear()}-${ist.getMonth()}-${ist.getDate()}-${hour}-${minute}`;
 
   if (
-    currentDay    === parseInt(config.day)    &&
-    currentHour   === parseInt(config.hour)   &&
-    currentMinute === parseInt(config.minute) &&
-    _lastFired    !== fireKey
+    day    === parseInt(config.day)    &&
+    hour   === parseInt(config.hour)   &&
+    minute === parseInt(config.minute) &&
+    _lastFired !== fireKey
   ) {
     _lastFired = fireKey;
-    console.log('[scheduler] Firing weekly update notification...');
+    console.log('[scheduler] 🔥 Firing scheduled notification!');
     await sendScheduledNotification(config);
   }
 }
 
 function start() {
-  console.log('[scheduler] Started — checking every minute for scheduled notifications (IST).');
-  tick(); // immediate check on startup
+  console.log('[scheduler] Started. Checking every minute (IST timezone).');
+  tick();
   _interval = setInterval(tick, 60 * 1000);
 }
 
 function reload() {
-  console.log('[scheduler] Reloading with new schedule config...');
+  console.log('[scheduler] Reloading schedule config...');
   if (_interval) clearInterval(_interval);
   _lastFired = null;
   start();
