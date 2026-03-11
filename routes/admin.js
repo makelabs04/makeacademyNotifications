@@ -16,19 +16,6 @@ function adminAuth(req, res, next) {
 }
 router.use(adminAuth);
 
-// Detect which college column exists in users table (cached)
-let collegeCol = null;
-async function getCollegeCol() {
-  if (collegeCol !== null) return collegeCol;
-  try {
-    const [cols] = await db.execute("SHOW COLUMNS FROM users");
-    const names  = cols.map(c => c.Field);
-    const candidates = ['college','College','clg_name','institution','college_name','inst_name','school'];
-    collegeCol = candidates.find(c => names.includes(c)) || '';
-  } catch(e) { collegeCol = ''; }
-  return collegeCol;
-}
-
 // Stats
 router.get('/stats', async (req, res) => {
   try {
@@ -57,17 +44,14 @@ router.get('/stats', async (req, res) => {
 // Subscribers list
 router.get('/subscribers', async (req, res) => {
   try {
-    const col = await getCollegeCol();
-    const clgSel = col ? `, u.${col} as college` : ", '' as college";
     const [rows] = await db.execute(
-      `SELECT s.user_email, s.created_at, s.updated_at, u.Full_name, u.Phone_number${clgSel}
+      `SELECT s.user_email, s.created_at, s.updated_at, u.Full_name, u.Phone_number
        FROM ma_push_subscriptions s
        LEFT JOIN users u ON u.Email = s.user_email
        ORDER BY s.created_at DESC`
     );
     return res.json({ success: true, data: rows });
   } catch (err) {
-    console.error('[admin/subscribers]', err);
     return res.status(500).json({ error: 'Server error', detail: err.message });
   }
 });
@@ -75,10 +59,8 @@ router.get('/subscribers', async (req, res) => {
 // Non-subscribers list
 router.get('/non-subscribers', async (req, res) => {
   try {
-    const col = await getCollegeCol();
-    const clgSel = col ? `, u.${col} as college` : ", '' as college";
     const [rows] = await db.execute(
-      `SELECT u.Email, u.Full_name, u.Phone_number, u.created_at${clgSel}
+      `SELECT u.Email, u.Full_name, u.Phone_number, u.created_at
        FROM users u
        WHERE u.Email IS NOT NULL
          AND u.Email NOT IN (SELECT user_email FROM ma_push_subscriptions)
@@ -87,7 +69,6 @@ router.get('/non-subscribers', async (req, res) => {
     );
     return res.json({ success: true, data: rows });
   } catch (err) {
-    console.error('[admin/non-subscribers]', err);
     return res.status(500).json({ error: 'Server error', detail: err.message });
   }
 });
@@ -98,18 +79,19 @@ router.get('/schedule', async (req, res) => {
     const [rows] = await db.execute('SELECT * FROM ma_schedule_config ORDER BY id DESC LIMIT 1');
     if (rows.length === 0) {
       return res.json({ success: true, data: {
-        day: parseInt(process.env.SCHEDULE_DAY||'6'), hour: parseInt(process.env.SCHEDULE_HOUR||'10'),
-        minute: parseInt(process.env.SCHEDULE_MINUTE||'0'),
-        title: process.env.SCHEDULE_TITLE||'🚀 MakeAcademy Weekly Update',
-        body:  process.env.SCHEDULE_BODY||'New features are now live!',
-        url:   process.env.SCHEDULE_URL||'https://makeacademy.in/dashcharts.php', enabled: true,
+        day:6, hour:10, minute:0,
+        title:'🚀 MakeAcademy Weekly Update',
+        body:'New features are now live!',
+        url:'https://makeacademy.in/dashcharts.php', enabled:true,
       }});
     }
     return res.json({ success: true, data: rows[0] });
   } catch (err) {
     return res.json({ success: true, data: {
-      day:6, hour:10, minute:0, title:'🚀 MakeAcademy Weekly Update',
-      body:'New features are now live!', url:'https://makeacademy.in/dashcharts.php', enabled:true,
+      day:6, hour:10, minute:0,
+      title:'🚀 MakeAcademy Weekly Update',
+      body:'New features are now live!',
+      url:'https://makeacademy.in/dashcharts.php', enabled:true,
     }});
   }
 });
@@ -134,7 +116,6 @@ router.post('/schedule', async (req, res) => {
     require('../scheduler').reload();
     return res.json({ success: true, message: 'Schedule updated' });
   } catch (err) {
-    console.error('[admin/schedule POST]', err);
     return res.status(500).json({ error: 'Server error', detail: err.message });
   }
 });
@@ -183,7 +164,6 @@ router.post('/send', async (req, res) => {
     } catch(e) {}
     return res.json({ success:true, sent, failed, total:rows.length });
   } catch (err) {
-    console.error('[admin/send]', err);
     return res.status(500).json({ error: 'Server error', detail: err.message });
   }
 });
